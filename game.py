@@ -3,6 +3,7 @@ import random
 
 class Game:
 
+    game_id = None
     n_levels = None
     n_players = None
     hp = None
@@ -12,7 +13,8 @@ class Game:
     rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
     n_bombs = 1
 
-    def __init__ (self, n_players):
+    def __init__ (self, game_id, n_players):
+        self.game_id = game_id
         self.n_players = n_players
         self.player_hands = [set() for _ in range(n_players)]
         if n_players == 2:
@@ -36,6 +38,9 @@ class Game:
             res[i] = set(deck[i * n_cards : (i+1) * n_cards])
         return res
 
+    def get_status():
+        return (self.game_id, player_hands)
+
 
     def start_level(self, force=False):
         if not self.level_started or force:
@@ -46,7 +51,7 @@ class Game:
             print("It was attempted to start a level before \
                    finishing the previous one. Use 'start_leve(force=True)' \
                    to force start a level.")
-        return self.player_hands
+        return self.get_status()
 
     def act(self, player_id, card):
         if card in self.player_hands[player_id]:
@@ -64,7 +69,8 @@ class Game:
             print("It was attempted to play a card not being held by the player. \
                     Use 'act(player_id, card, force=True)' \
                     to force play a card.")
-        return self.player_hands
+
+        return self.get_status()
 
 
 if __name__ == '__main__':
