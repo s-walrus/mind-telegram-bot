@@ -3,19 +3,48 @@ import random
 
 class Game:
 
+    # initialized on init
     game_id = None
+    # initialized on start
     n_levels = None
-    n_players = None
     hp = None
-    player_hands = None
+    # initialized on compilation
+    n_players = 0
+    player_hands = dict()
     level = 0
     level_started = False
+    game_started = False
     rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
-    n_bombs = 1
+    n_shurikens = 1
 
-    def __init__ (self, game_id, n_players):
+    def __init__ (self, game_id):
         self.game_id = game_id
-        self.n_players = n_players
+
+
+    def pass_cards(self, n_cards):
+        deck = list(range(1, 101))
+        random.shuffle(deck)
+        res = [set() for _ in range(self.n_players)]
+        for i in range(self.n_players):
+            res[i] = set(deck[i * n_cards : (i+1) * n_cards])
+        return res
+
+    def get_status():
+        return {'game_started': self.game_started,
+                'game_id': self.game_id,
+                'n_shurikens': self.n_shurikens,
+                'hp': self.hp,
+                'player_hands': self.player_hands}
+
+
+    def add_player(player_id):
+        player_hands[player_id] = set()
+        n_players += 1
+        return get_status()
+
+    def start_game():
+        game_started = True
+        self.n_players = len(player_hands.keys())
         self.player_hands = [set() for _ in range(n_players)]
         if n_players == 2:
             self.n_levels = 12
@@ -28,19 +57,7 @@ class Game:
             self.hp = 4
         else:
             raise ValueError("n_levels should be either 2, 3, or 4")
-
-
-    def pass_cards(self, n_cards):
-        deck = list(range(1, 101))
-        random.shuffle(deck)
-        res = [set() for _ in range(self.n_players)]
-        for i in range(self.n_players):
-            res[i] = set(deck[i * n_cards : (i+1) * n_cards])
-        return res
-
-    def get_status():
-        return (self.game_id, player_hands)
-
+        return get_status()
 
     def start_level(self, force=False):
         if not self.level_started or force:
