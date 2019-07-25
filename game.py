@@ -46,7 +46,7 @@ class Game:
     # returns the current game state as dict object
     # this object is returned by every public function
     def get_status(self):
-        return {'game_started': self.game_started,
+        return {'status': self.status,
                 'game_id': self.game_id,
                 'n_shurikens': self.n_shurikens,
                 'hp': self.hp,
@@ -54,7 +54,7 @@ class Game:
 
     # add a player to the unstarted game session
     def add_player(self, player_id):
-        if not self.game_started:
+        if self.status == self.__NOT_STARTED:
             self.player_hands[player_id] = set()
             self.player_stops[player_id] = False
             self.n_players += 1
