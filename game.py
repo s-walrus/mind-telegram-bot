@@ -7,6 +7,7 @@ class Game:
     __FREE_CHAT = 1
     __CONCENTRATION = 2
     __ACTION = 3
+    __FINISHED = 4
     # initialized on init
     game_id = None
     # initialized on start
@@ -41,7 +42,10 @@ class Game:
     def finish_level(self):
         if self.status == self.__ACTION or \
                 self.status == self.__CONCENTRATION:
-            self.status = self.__FREE_CHAT
+            if self.level == self.n_levels:
+                self.status = self.__FINISHED
+            else:
+                self.status = self.__FREE_CHAT
 
     # returns the current game state as dict object
     # this object is returned by every public function
