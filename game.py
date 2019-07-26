@@ -133,6 +133,15 @@ class Game:
         self.place_hand(player_id)
         return self.get_status()
 
+    def use_shuriken(self):
+        if self.status == self.__ACTION and \
+                self.n_shurikens > 0:
+            self.n_shurikens -= 1
+            for hand in self.player_hands:
+                if not hand.empty():
+                    hand.remove(min(hand))
+                    # TODO send discarded cards in status
+
 
 if __name__ == '__main__':
     game = Game(3)
