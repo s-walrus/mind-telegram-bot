@@ -12,5 +12,6 @@ def get_cards(player_count, level):
 
     return cards
 
+
 a = get_cards(2, 2)
 print(a)
