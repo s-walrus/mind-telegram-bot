@@ -1,5 +1,6 @@
 import telebot
 import game
+import keyboards
 
 bot = telebot.TeleBot('955239993:AAGlEQaAkp8o3YSrz4pZ7hptKOBf-SI7XK0')
 
@@ -14,38 +15,69 @@ def start(message):
         games[message.chat.id]
         pass
     except KeyError:
-        bot.send_message(message.chat.id, 'Привет, начинаем новую игру!')
+        bot.send_message(message.chat.id, 'Привет, начинаем новую игру!', reply_markup=keyboards.begin_keyboard())
         new_game = game.Game(message.chat.id)
         games[message.chat.id] = new_game
         print(message.from_user)
 
 
-@bot.message_handler(regexp='участвую')
+@bot.message_handler(regexp=r'Участвую')
 def add_player(message):
-    games[message.chat.id].add_player(message.from_user.id)
+    if not games[message.chat.id].get_status()['status']:
+        if message.from_user.id not in games[message.chat.id].player_hands.keys():
+            if games[message.chat.id].n_players == 4:
+                bot.send_message(message.chat.id,
+                                 'Максимальное количество игроков достигнуто', reply_markup=keyboards.begin_keyboard())
+            else:
+                games[message.chat.id].add_player(message.from_user.id)
+                bot.send_message(message.chat.id, 'Ты в игре!', reply_markup=keyboards.begin_keyboard())
+        else:
+            bot.send_message(message.chat.id, 'Ты уже участвуешь!', reply_markup=keyboards.begin_keyboard())
 
 
-@bot.message_handler(regexp='начать игру')
+@bot.message_handler(regexp=r'Начать игру')
 def start_game(message):
     chat_id = message.chat.id
-    if len(games[chat_id].players) < 2:
-        bot.send_message(chat_id, 'Недостаточно игроков')
+    if len(games[chat_id].status()['player_hands']) < 2:
+        bot.send_message(chat_id, 'Недостаточно игроков', reply_markup=keyboards.begin_keyboard())
         return
     games[chat_id].start_game()
 
 
-@bot.message_handler(regexp='закончить игру')
+@bot.message_handler(regexp=r'Закончить игру')
 def end_game(message):
     games[message.chat.id].end_game()
-    bot.send_message(message.chat.id, 'Игра закончена')
+    bot.send_message(message.chat.id, 'Игра закончена', reply_markup=keyboards.begin_keyboard())
 
 
-@bot.message_handler(regexp=r'^[1-9][0-9]?$|^100$')
+@bot.message_handler(regexp=r'Ход')
 def act(message):
-    if games[message.chat.id].get_status()['game_started']:
-        games[message.chat.id].act(message.from_user.id, int(message.text))\
+    if games[message.chat.id].get_status()['status']:
+        games[message.chat.id].act(message.from_user.id)
 
 
+@bot.message_handler(regexp=r'[С|с]топ')
+def stop(message):
+    bot.send_message(message.chat.id, 'СТОП! Все игроки - нажмите кнопку "стоп" на своих устройствах!')
+    games[message.chat.id].stop(message.from_user.id)
+
+
+@bot.message_handler(regexp=r'[С|с]юрикен')
+def shuriken(message):
+    games[message.chat.id].add_shuriken(message.from_user.id)
+    if 1 == 1:
+        bot.send_message(message.chat.id, "Используем сюрикен")
+
+
+@bot.message_handler(regexp=r'[О|о]тменить')
+def cancel(message):
+    pass
+
+
+def status(message):
+    for player_id, hand in games[message.chat.id].player_hands.items():
+        text = 'Твоя рука:\n' + ' '.join(hand)
+        bot.send_message(player_id, text)
 
 
 bot.polling()
