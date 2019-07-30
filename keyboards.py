@@ -1,33 +1,29 @@
 from telebot import types
 
 
-
-
 def begin_keyboard():
     keyboard = types.ReplyKeyboardMarkup()
-    btnAddMe = types.KeyboardButton('Участвую')
-    btnStart = types.KeyboardButton('Начать игру')
-    keyboard.row(btnAddMe)
-    keyboard.row(btnStart)
+    btn_add_me = types.KeyboardButton('Участвую')
+    btn_start = types.KeyboardButton('Начать игру')
+    keyboard.row(btn_add_me)
+    keyboard.row(btn_start)
     return keyboard
 
 
 def game_keyboard():
     keyboard = types.ReplyKeyboardMarkup()
-    btnTurn = types.KeyboardButton('Ход')
-    btnStop = types.KeyboardButton('Стоп')
-    btnShuriken = types.KeyboardButton('Сюрикен')
-    keyboard.row(btnTurn, btnStop)
-    keyboard.row(btnShuriken)
+    btn_turn = types.KeyboardButton('Ход')
+    btn_stop = types.KeyboardButton('Стоп')
+    btn_shuriken = types.KeyboardButton('Сюрикен')
+    keyboard.row(btn_turn, btn_stop)
+    keyboard.row(btn_shuriken)
     return keyboard
 
 
 def stop_keyboard():
     keyboard = types.ReplyKeyboardMarkup()
-    btnResume = types.KeyboardButton('Продолжить')
-    keyboard.row(btnResume)
+    btn_resume = types.KeyboardButton('Продолжить')
+    keyboard.row(btn_resume)
     return keyboard
 
 
-def keyboard():
-    pass
