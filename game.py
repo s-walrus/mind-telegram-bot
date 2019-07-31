@@ -8,7 +8,7 @@ class Game:
     __CONCENTRATION = 2
     __ACTION = 3
     __WIN = 4
-    __LOOSE = 5
+    __LOSE = 5
     __STOP = 0
     __NORMAL = 1
     __SHURIKEN = 2
@@ -112,7 +112,7 @@ class Game:
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
-                    self.status = self.__LOOSE
+                    self.status = self.__LOSE
                     self.game_over()
             if sum(map(sum, self.player_hands.values())) == 0:
                 self.finish_level()
