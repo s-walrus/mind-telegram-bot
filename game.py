@@ -7,7 +7,11 @@ class Game:
     __FREE_CHAT = 1
     __CONCENTRATION = 2
     __ACTION = 3
-    __FINISHED = 4
+    __WIN = 4
+    __LOOSE = 5
+    __STOP = 0
+    __NORMAL = 1
+    __SHURIKEN = 2
     # initialized on init
     game_id = None
     # initialized on start
@@ -16,7 +20,7 @@ class Game:
     # initialized on compilation
     n_players = 0
     player_hands = dict()
-    player_stops = dict()
+    player_status = dict()
     level = 0
     status = 0
     rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
@@ -43,7 +47,7 @@ class Game:
         if self.status == self.__ACTION or \
                 self.status == self.__CONCENTRATION:
             if self.level == self.n_levels:
-                self.status = self.__FINISHED
+                self.status = self.__WIN
             else:
                 self.status = self.__FREE_CHAT
 
@@ -93,6 +97,7 @@ class Game:
                 self.place_hand(player_id)
         return self.get_status()
 
+    # TODO act(self, player_id) -> play the lowest card
     # place a card to the stack
     def act(self, player_id, card):
         if self.status == self.__ACTION and card in self.player_hands[player_id]:
@@ -107,6 +112,7 @@ class Game:
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
+                    self.status = self.__LOOSE
                     self.game_over()
             if sum(map(sum, self.player_hands.values())) == 0:
                 self.finish_level()
