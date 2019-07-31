@@ -64,7 +64,7 @@ class Game:
     def add_player(self, player_id):
         if self.status == self.__NOT_STARTED:
             self.player_hands[player_id] = set()
-            self.player_stops[player_id] = False
+            self.player_status[player_id] = self.__NORMAL
             self.n_players += 1
         else:
             raise RuntimeError('A player was added after the game had been started.')
@@ -125,13 +125,13 @@ class Game:
 
     def place_hand(self, player_id):
         if self.status == self.__ACTION:
-            self.player_stops[player_id] = True
+            self.player_status[player_id] = self.__STOP
             self.status = self.__CONCENTRATION
 
     def release_hand(self, player_id):
         if self.status == self.__CONCENTRATION:
-            self.player_stops[player_id] = False
-            if sum(self.player_stops.values()) == 0:
+            self.player_status[player_id] = self.__NORMAL
+            if self.__STOP not in self.player_status.values():
                 self.status = self.__ACTION
         return self.get_status()
 
@@ -139,14 +139,25 @@ class Game:
         self.place_hand(player_id)
         return self.get_status()
 
-    def use_shuriken(self):
+    def vote_shuriken(self, player_id):
         if self.status == self.__ACTION and \
                 self.n_shurikens > 0:
-            self.n_shurikens -= 1
-            for hand in self.player_hands:
-                if not hand.empty():
-                    hand.remove(min(hand))
-                    # TODO send discarded cards in status
+            self.player_status[player_id] = self.__SHURIKEN
+            if self.player_status.values().count(self.__SHURIKEN) == \
+                    len(self.player_status.values()):
+                self.n_shurikens -= 1
+                for hand in self.player_hands:
+                    if not hand.empty():
+                        hand.remove(min(hand))
+                        # TODO send discarded cards in status
+                for player_id in self.player_status.keys():
+                    self.player_status[player_id] = self.__NORMAL
+        return self.get_status()
+
+    def unvote_shuriken(self, player_id):
+        if self.player_status[player_id] == self.__SHURIKEN:
+            self.player_status[player_id] = self.__NORMAL
+        return self.get_status()
 
 
 if __name__ == '__main__':
