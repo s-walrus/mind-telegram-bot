@@ -7,7 +7,11 @@ class Game:
     __FREE_CHAT = 1
     __CONCENTRATION = 2
     __ACTION = 3
-    __FINISHED = 4
+    __WIN = 4
+    __LOSE = 5
+    __STOP = 0
+    __NORMAL = 1
+    __SHURIKEN = 2
     # initialized on init
     game_id = None
     # initialized on start
@@ -16,7 +20,7 @@ class Game:
     # initialized on compilation
     n_players = 0
     player_hands = dict()
-    player_stops = dict()
+    player_status = dict()
     level = 0
     status = 0
     rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
@@ -43,7 +47,7 @@ class Game:
         if self.status == self.__ACTION or \
                 self.status == self.__CONCENTRATION:
             if self.level == self.n_levels:
-                self.status = self.__FINISHED
+                self.status = self.__WIN
             else:
                 self.status = self.__FREE_CHAT
 
@@ -60,7 +64,7 @@ class Game:
     def add_player(self, player_id):
         if self.status == self.__NOT_STARTED:
             self.player_hands[player_id] = set()
-            self.player_stops[player_id] = False
+            self.player_status[player_id] = self.__NORMAL
             self.n_players += 1
         else:
             raise RuntimeError('A player was added after the game had been started.')
@@ -94,6 +98,7 @@ class Game:
                 self.place_hand(player_id)
         return self.get_status()
 
+    # TODO act(self, player_id) -> play the lowest card
     # place a card to the stack
     def act(self, player_id):
         print(self.player_hands)
@@ -110,6 +115,7 @@ class Game:
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
+                    self.status = self.__LOSE
                     self.game_over()
             if sum(map(sum, self.player_hands.values())) == 0:
                 self.finish_level()
@@ -122,13 +128,13 @@ class Game:
 
     def place_hand(self, player_id):
         if self.status == self.__ACTION:
-            self.player_stops[player_id] = True
+            self.player_status[player_id] = self.__STOP
             self.status = self.__CONCENTRATION
 
     def release_hand(self, player_id):
         if self.status == self.__CONCENTRATION:
-            self.player_stops[player_id] = False
-            if sum(self.player_stops.values()) == 0:
+            self.player_status[player_id] = self.__NORMAL
+            if self.__STOP not in self.player_status.values():
                 self.status = self.__ACTION
         return self.get_status()
 
@@ -136,14 +142,25 @@ class Game:
         self.place_hand(player_id)
         return self.get_status()
 
-    def use_shuriken(self):
+    def vote_shuriken(self, player_id):
         if self.status == self.__ACTION and \
                 self.n_shurikens > 0:
-            self.n_shurikens -= 1
-            for hand in self.player_hands:
-                if not hand.empty():
-                    hand.remove(min(hand))
-                    # TODO send discarded cards in status
+            self.player_status[player_id] = self.__SHURIKEN
+            if self.player_status.values().count(self.__SHURIKEN) == \
+                    len(self.player_status.values()):
+                self.n_shurikens -= 1
+                for hand in self.player_hands:
+                    if not hand.empty():
+                        hand.remove(min(hand))
+                        # TODO send discarded cards in status
+                for player_id in self.player_status.keys():
+                    self.player_status[player_id] = self.__NORMAL
+        return self.get_status()
+
+    def unvote_shuriken(self, player_id):
+        if self.player_status[player_id] == self.__SHURIKEN:
+            self.player_status[player_id] = self.__NORMAL
+        return self.get_status()
 
 
 if __name__ == '__main__':
