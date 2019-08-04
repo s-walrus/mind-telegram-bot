@@ -8,6 +8,7 @@ bot = telebot.TeleBot('955239993:AAGlEQaAkp8o3YSrz4pZ7hptKOBf-SI7XK0')
 games = {}
 
 players = []
+print('started')
 
 
 def player_status(message):
@@ -22,7 +23,7 @@ def start(message):
         games[message.chat.id]
         pass
     except KeyError:
-        bot.send_message(message.chat.id, 'Привет, начинаем новую игру!',
+        bot.send_message(message.chat.id, 'Привет, начинаем новую игру!\nНачни диалог со мной (t.me/the_mind_bot), а затем нажми кнопку "Участвую"',
                          reply_markup=keyboards.begin_keyboard())
         new_game = game.Game(message.chat.id)
         games[message.chat.id] = new_game
@@ -57,6 +58,7 @@ def start_game(message):
                          reply_markup=keyboards.begin_keyboard())
         return
     games[chat_id].start_game()
+    bot.send_message(chat_id, 'Погнали', reply_markup=keyboards.game_keyboard())
 
 
 @bot.message_handler(regexp=r'^Закончить игру$')

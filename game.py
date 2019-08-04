@@ -67,6 +67,7 @@ class Game:
         return self.get_status()
 
     def start_game(self):
+        print(self.n_players)
         if self.status == self.__NOT_STARTED:
             self.status = self.__FREE_CHAT
             if self.n_players == 2:
@@ -94,7 +95,9 @@ class Game:
         return self.get_status()
 
     # place a card to the stack
-    def act(self, player_id, card):
+    def act(self, player_id):
+        print(self.player_hands)
+        card = min(self.player_hands[player_id])
         if self.status == self.__ACTION and card in self.player_hands[player_id]:
             self.player_hands[player_id].remove(card)
             self.top_card = card
