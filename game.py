@@ -94,7 +94,7 @@ class Game:
     def start_level(self):
         if self.status == self.__FREE_CHAT:
             self.level += 1
-            self.status = self.__CONCENTRATION
+            self.status = self.__ACTION
             self.pass_cards(self.level)
             # everyone places their hand on the table
             for player_id in self.player_status.keys():
@@ -130,7 +130,7 @@ class Game:
         return self.get_status()
 
     def place_hand(self, player_id):
-        if self.status == self.__ACTION:
+        if self.status in [self.__CONCENTRATION, self.__ACTION]:
             self.player_status[player_id] = self.__STOP
             self.status = self.__CONCENTRATION
 
