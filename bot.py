@@ -1,5 +1,5 @@
 import telebot
-
+import time
 import game
 import keyboards
 
@@ -17,6 +17,13 @@ def player_status(message):
     for player_id, hand in games[message.chat.id].player_hands.items():
         text = 'Твоя рука:\n' + ' '.join([str(item) for item in hand])
         bot.send_message(player_id, text)
+
+
+def start_level(message):
+    games[message.chat.id].start_level()
+    bot.send_message(message.chat.id, "КОНЦЕНТРАЦИЯ")
+    time.sleep(5)
+    bot.send_message(message.chat.id, "Можно отпускать руки", reply_markup=keyboards.concentration_keyboard())
 
 
 @bot.message_handler(commands=['start'])
@@ -91,10 +98,18 @@ def stop(message):
 @bot.message_handler(regexp=r'^СТОП!$')
 def player_stop(message):
     games[message.chat.id].stop(message.from_user.id)
-    if games[message.chat.id].check_stop_hands():
+    if games[message.chat.id].check_stop_status():
         bot.send_message(message.chat.id, "Продолжаем!",
                          reply_markup=keyboards.game_keyboard())
         games[message.chat.id].release_hands_all()
+
+
+@bot.message_handler(regexp='Отпустить руку')
+def player_concentration(message):
+    games[message.chat.id].release_hand(message.from_user.id)
+    if games[message.chat.id].check_concentration_status():
+        bot.send_message(message.chat.id, "Можно играть!", reply_markup=keyboards.game_keyboard())
+
 
 
 @bot.message_handler(regexp=r'^Сюрикен$')

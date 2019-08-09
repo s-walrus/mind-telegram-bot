@@ -34,6 +34,13 @@ def stop_keyboard():
     return keyboard
 
 
+def concentration_keyboard():
+    keyboard = types.ReplyKeyboardMarkup()
+    btn_release_hand = types.KeyboardButton('Отпустить руку')
+    keyboard.row(btn_release_hand)
+    return keyboard
+
+
 
 
 
