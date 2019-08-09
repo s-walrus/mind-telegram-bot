@@ -94,7 +94,7 @@ class Game:
             self.status = self.__CONCENTRATION
             self.pass_cards(self.level)
             # everyone places their hand on the table
-            for player_id in self.player_stops.keys():
+            for player_id in self.player_status.keys():
                 self.place_hand(player_id)
         return self.get_status()
 
