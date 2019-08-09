@@ -1,4 +1,5 @@
 import random
+from itertools import dropwhile
 
 
 class Game:
@@ -108,11 +109,11 @@ class Game:
             self.player_hands[player_id].remove(card)
             self.top_card = card
             flag = False
-            for hand in self.player_hands.values():
-                for c in hand:
-                    if c < card:
-                        flag = True
-                        hand.remove(c)
+            for key, hand in self.player_hands:
+                new_hand = set(dropwhile(lambda x: x < card, hand))
+                if new_hand != hand:
+                    flag = True
+                    self.player_hands[key] = new_hand
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
