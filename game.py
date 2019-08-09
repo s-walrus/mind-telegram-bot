@@ -60,6 +60,7 @@ class Game:
                 'n_shurikens': self.n_shurikens,
                 'hp': self.hp,
                 'player_hands': self.player_hands,
+                'player_status': self.player_status,
                 'top_card': self.top_card}
 
     # add a player to the unstarted game session
