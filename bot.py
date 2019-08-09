@@ -4,8 +4,8 @@ import game
 import keyboards
 
 bot = telebot.TeleBot('955239993:AAGlEQaAkp8o3YSrz4pZ7hptKOBf-SI7XK0')
-telebot.apihelper.proxy = {'https': 'socks5h://109.236.81.228:54321',
-                           'http': 'socks5h://109.236.81.228:54321'}
+# telebot.apihelper.proxy = {'https': 'socks5h://109.236.81.228:54321',
+#                            'http': 'socks5h://109.236.81.228:54321'}
 
 games = {}
 
