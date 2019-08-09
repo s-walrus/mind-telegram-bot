@@ -169,6 +169,13 @@ class Game:
                 flag = False
         return flag
 
+    def check_concentration_status(self):
+        flag = True
+        for status in self.player_status.values():
+            if status == self.__CONCENTRATION:
+                flag = False
+        return flag
+
     def release_hands_all(self):
         for player in self.player_status.keys():
             self.release_hand(player)
