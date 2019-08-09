@@ -4,6 +4,8 @@ import game
 import keyboards
 
 bot = telebot.TeleBot('955239993:AAGlEQaAkp8o3YSrz4pZ7hptKOBf-SI7XK0')
+telebot.apihelper.proxy = {'https': 'socks5h://109.236.81.228:54321',
+                           'http': 'socks5h://109.236.81.228:54321'}
 
 games = {}
 
@@ -23,7 +25,10 @@ def start(message):
         games[message.chat.id]
         pass
     except KeyError:
-        bot.send_message(message.chat.id, 'Привет, начинаем новую игру!\nНачни диалог со мной (t.me/the_mind_bot), а затем нажми кнопку "Участвую"',
+        bot.send_message(message.chat.id,
+                         'Привет, начинаем новую игру!\nНачни диалог со мной '
+                         '(t.me/the_mind_bot), а затем нажми кнопку '
+                         '"Участвую"',
                          reply_markup=keyboards.begin_keyboard())
         new_game = game.Game(message.chat.id)
         games[message.chat.id] = new_game
@@ -59,6 +64,7 @@ def start_game(message):
         return
     games[chat_id].start_game()
     bot.send_message(chat_id, 'Погнали', reply_markup=keyboards.game_keyboard())
+    games[chat_id].start_level()
 
 
 @bot.message_handler(regexp=r'^Закончить игру$')
@@ -80,6 +86,15 @@ def stop(message):
     bot.send_message(message.chat.id,
                      'СТОП! Все игроки - нажмите кнопку "стоп" на своих устройствах!')
     games[message.chat.id].stop(message.from_user.id)
+
+
+@bot.message_handler(regexp=r'^СТОП!$')
+def player_stop(message):
+    games[message.chat.id].stop(message.from_user.id)
+    if games[message.chat.id].check_stop_hands():
+        bot.send_message(message.chat.id, "Продолжаем!",
+                         reply_markup=keyboards.game_keyboard())
+        games[message.chat.id].release_hands_all()
 
 
 @bot.message_handler(regexp=r'^Сюрикен$')

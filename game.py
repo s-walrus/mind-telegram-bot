@@ -162,6 +162,17 @@ class Game:
             self.player_status[player_id] = self.__NORMAL
         return self.get_status()
 
+    def check_stop_status(self):
+        flag = True
+        for status in self.player_status.values():
+            if status != self.__STOP:
+                flag = False
+        return flag
+
+    def release_hands_all(self):
+        for player in self.player_status.keys():
+            self.release_hand(player)
+
 
 if __name__ == '__main__':
     game = Game(3)

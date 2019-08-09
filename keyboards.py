@@ -20,10 +20,20 @@ def game_keyboard():
     return keyboard
 
 
+def place_hand_keyboard():
+    keyboard = types.ReplyKeyboardMarkup()
+    btn_stop = types.KeyboardButton('СТОП!')
+    keyboard.row(btn_stop)
+    return keyboard
+
+
 def stop_keyboard():
     keyboard = types.ReplyKeyboardMarkup()
     btn_resume = types.KeyboardButton('Продолжить')
     keyboard.row(btn_resume)
     return keyboard
+
+
+
 
 
