@@ -86,6 +86,9 @@ def act(message):
     if games[message.chat.id].get_status()['status'] == 3:
         games[message.chat.id].act(message.from_user.id)
     player_status(message)
+    card_played = str(games[message.chat.id].get_status()['top_card'])
+    bot.send_message(message.chat.id, 'Сыгранная карта: ' + card_played, reply_markup=keyboards.game_keyboard())
+
 
 
 @bot.message_handler(regexp=r'^Стоп$')
@@ -107,7 +110,7 @@ def player_stop(message):
 @bot.message_handler(regexp='Отпустить руку')
 def player_concentration(message):
     games[message.chat.id].release_hand(message.from_user.id)
-    if games[message.chat.id].get_status['status'] == 3:
+    if games[message.chat.id].get_status()['status'] == 3:
         bot.send_message(message.chat.id, "Можно играть!", reply_markup=keyboards.game_keyboard())
 
 
