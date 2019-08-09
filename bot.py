@@ -15,7 +15,7 @@ print('started')
 
 def player_status(message):
     for player_id, hand in games[message.chat.id].player_hands.items():
-        text = 'Твоя рука:\n' + ' '.join(hand)
+        text = 'Твоя рука:\n' + ' '.join([str(item) for item in hand])
         bot.send_message(player_id, text)
 
 
