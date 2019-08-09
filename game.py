@@ -107,7 +107,7 @@ class Game:
             self.player_hands[player_id].remove(card)
             self.top_card = card
             flag = False
-            for hand in self.player_hands:
+            for hand in self.player_hands.values():
                 for c in hand:
                     if c < card:
                         flag = True
