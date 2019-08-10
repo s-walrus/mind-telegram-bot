@@ -61,7 +61,8 @@ class Game:
                 'hp': self.hp,
                 'player_hands': self.player_hands,
                 'player_status': self.player_status,
-                'top_card': self.top_card}
+                'top_card': self.top_card,
+                'level': self.level}
 
     # add a player to the unstarted game session
     def add_player(self, player_id):
@@ -74,7 +75,6 @@ class Game:
         return self.get_status()
 
     def start_game(self):
-        print(self.n_players)
         if self.status == self.__NOT_STARTED:
             self.status = self.__FREE_CHAT
             if self.n_players == 2:
@@ -176,6 +176,22 @@ class Game:
     def release_hands_all(self):
         for player in self.player_status.keys():
             self.release_hand(player)
+
+    def load_status(self, status_dict):
+        self.game_id = status_dict['game_id']
+        self.n_players = len(status_dict['player_hands'].keys())
+
+        # calculate n_levels
+        self.status = self.__NOT_STARTED
+        self.start_game()
+
+        self.hp = status_dict['hp']
+        self.player_hands = status_dict['player_hands']
+        self.player_status = status_dict['player_status']
+        self.level = status_dict['level']
+        self.status = status_dict['status']
+        self.n_shurikens = status_dict['n_shurikens']
+        self.top_card = status_dict['top_card']
 
 
 if __name__ == '__main__':
