@@ -104,9 +104,8 @@ class Game:
     # TODO act(self, player_id) -> play the lowest card
     # place a card to the stack
     def act(self, player_id):
-        print(self.player_hands)
-        card = min(self.player_hands[player_id])
-        if self.status == self.__ACTION:
+        if self.status == self.__ACTION and self.player_hands[player_id]:
+            card = min(self.player_hands[player_id])
             self.player_hands[player_id].remove(card)
             self.top_card = card
             flag = False
