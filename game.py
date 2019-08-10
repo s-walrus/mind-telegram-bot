@@ -143,11 +143,11 @@ class Game:
         if self.status == self.__ACTION and \
                 self.n_shurikens > 0:
             self.player_status[player_id] = self.__SHURIKEN
-            if self.player_status.values().count(self.__SHURIKEN) == \
+            if list(self.player_status.values()).count(self.__SHURIKEN) == \
                     len(self.player_status.values()):
                 self.n_shurikens -= 1
-                for hand in self.player_hands:
-                    if not hand.empty():
+                for hand in self.player_hands.values():
+                    if hand:
                         hand.remove(min(hand))
                         # TODO send discarded cards in status
                 for player_id in self.player_status.keys():
