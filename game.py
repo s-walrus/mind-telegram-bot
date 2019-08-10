@@ -106,15 +106,15 @@ class Game:
     def act(self, player_id):
         print(self.player_hands)
         card = min(self.player_hands[player_id])
-        if self.status == self.__ACTION and card in self.player_hands[player_id]:
+        if self.status == self.__ACTION:
             self.player_hands[player_id].remove(card)
             self.top_card = card
             flag = False
-            for key, hand in self.player_hands:
-                new_hand = set(dropwhile(lambda x: x < card, hand))
-                if new_hand != hand:
+            for player_id in self.player_hands.keys():
+                new_hand = set(dropwhile(lambda x: x < card, self.player_hands[player_id]))
+                if new_hand != self.player_hands[player_id]:
                     flag = True
-                    self.player_hands[key] = new_hand
+                    self.player_hands[player_id] = new_hand
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
@@ -122,11 +122,6 @@ class Game:
                     self.game_over()
             if sum(map(sum, self.player_hands.values())) == 0:
                 self.finish_level()
-        else:
-            print("It was attempted to play a card not being held by the player. " +
-                  "Use 'act(player_id, card, force=True)' " +
-                  "to force play a card.")
-
         return self.get_status()
 
     def place_hand(self, player_id):
