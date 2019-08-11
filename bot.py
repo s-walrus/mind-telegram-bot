@@ -28,13 +28,15 @@ __SHURIKEN = 2
 
 def win(message):
     bot.send_message(message.chat.id, 'Ура, вы победили!\n'
-                                      'Чтобы начать новую игру, напишите /start', reply_markup=keyboards.empty_keyboard())
+                                      'Чтобы начать новую игру, напишите /start',
+                     reply_markup=keyboards.empty_keyboard())
     games.pop(message.chat.id)
 
 
 def lose(message):
     bot.send_message(message.chat.id, 'Увы, вы проиграли :(\n'
-                                      'Чтобы начать новую игру, напишите /start', reply_markup=keyboards.empty_keyboard())
+                                      'Чтобы начать новую игру, напишите /start',
+                     reply_markup=keyboards.empty_keyboard())
     games.pop(message.chat.id)
 
 
@@ -45,7 +47,8 @@ def next_level(message):
     Ваша награда: {}
     Переходим к следующему уровню.
     '''.format(status['level'], prizes[status['level']])
-    bot.send_message(message.chat.id, message_text, reply_markup=keyboards.empty_keyboard())
+    bot.send_message(message.chat.id, message_text,
+                     reply_markup=keyboards.empty_keyboard())
     start_level(message)
 
 
@@ -61,7 +64,12 @@ def check_status(message):
 def player_status(message):
     for player_id, hand in games[message.chat.id].player_hands.items():
         text = 'Твоя рука:\n' + ' '.join([str(item) for item in hand])
-        bot.send_message(player_id, text)
+        try:
+            bot.send_message(player_id, text)
+        except:
+            bot.send_message(message.chat.id,
+                             'Игрок с id {} не начал диалог с ботом'.format(
+                                 player_id))
 
 
 def start_level(message):
@@ -94,7 +102,7 @@ def start(message):
 def add_player(message):
     print(message.text)
     print(games[message.chat.id].get_status())
-    if not games[message.chat.id].get_status()['status']:
+    if games[message.chat.id].get_status()['status'] == __NOT_STARTED:
         if message.from_user.id not in games[
             message.chat.id].player_hands.keys():
             if games[message.chat.id].n_players == 4:
