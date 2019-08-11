@@ -1,5 +1,3 @@
-import time
-
 import telebot
 
 import game
