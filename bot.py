@@ -1,3 +1,6 @@
+"""
+This file is a Telegram wrap for game.py class
+"""
 import time
 
 import telebot
@@ -27,6 +30,11 @@ __SHURIKEN = 2
 
 
 def win(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     bot.send_message(message.chat.id, 'Ура, вы победили!\n'
                                       'Чтобы начать новую игру, напишите /start',
                      reply_markup=keyboards.empty_keyboard())
@@ -34,6 +42,11 @@ def win(message):
 
 
 def lose(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     bot.send_message(message.chat.id, 'Увы, вы проиграли :(\n'
                                       'Чтобы начать новую игру, напишите /start',
                      reply_markup=keyboards.empty_keyboard())
@@ -41,6 +54,11 @@ def lose(message):
 
 
 def next_level(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     status = games[message.chat.id].get_status()
     prizes = {1: "Сюрикен", 2: "Дополнительная жизнь", 0: "Ничего"}
     message_text = '''Уровень {} завершён!
@@ -53,6 +71,11 @@ def next_level(message):
 
 
 def check_status(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     if games[message.chat.id].get_status()['status'] == __WIN:
         win(message)
     if games[message.chat.id].get_status()['status'] == __LOSE:
@@ -62,6 +85,11 @@ def check_status(message):
 
 
 def player_status(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     for player_id, hand in games[message.chat.id].player_hands.items():
         text = 'Твоя рука:\n' + ' '.join([str(item) for item in hand])
         try:
@@ -73,6 +101,11 @@ def player_status(message):
 
 
 def start_level(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     games[message.chat.id].start_level()
     bot.send_message(message.chat.id, "КОНЦЕНТРАЦИЯ!",
                      reply_markup=keyboards.empty_keyboard())
@@ -83,6 +116,11 @@ def start_level(message):
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     try:
         games[message.chat.id]
         pass
@@ -100,6 +138,11 @@ def start(message):
 
 @bot.message_handler(regexp=r'^Участвую$')
 def add_player(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     if games[message.chat.id].get_status()['status'] == __NOT_STARTED:
@@ -124,6 +167,11 @@ def add_player(message):
 
 @bot.message_handler(regexp=r'^Начать игру$')
 def start_game(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     chat_id = message.chat.id
@@ -139,6 +187,11 @@ def start_game(message):
 
 @bot.message_handler(regexp=r'^Закончить игру$')
 def end_game(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     games[message.chat.id].end_game()
@@ -148,6 +201,11 @@ def end_game(message):
 
 @bot.message_handler(regexp=r'^Ход$')
 def act(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     if games[message.chat.id].get_status()['status'] == __ACTION:
         games[message.chat.id].act(message.from_user.id)
         player_status(message)
@@ -159,6 +217,11 @@ def act(message):
 
 @bot.message_handler(regexp=r'^Стоп$')
 def stop(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     bot.send_message(message.chat.id,
@@ -168,6 +231,11 @@ def stop(message):
 
 @bot.message_handler(regexp=r'^СТОП!$')
 def player_stop(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     games[message.chat.id].stop(message.from_user.id)
@@ -179,6 +247,11 @@ def player_stop(message):
 
 @bot.message_handler(regexp='Отпустить руку')
 def player_concentration(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     games[message.chat.id].release_hand(message.from_user.id)
@@ -191,6 +264,11 @@ def player_concentration(message):
 
 @bot.message_handler(regexp=r'^Сюрикен$')
 def shuriken(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     games[message.chat.id].add_shuriken(message.from_user.id)
@@ -200,6 +278,11 @@ def shuriken(message):
 
 @bot.message_handler(regexp=r'^Отменить$')
 def cancel(message):
+    """
+
+    :param message: Telegram-like message object
+    :return:
+    """
     print(message.text)
     print(games[message.chat.id].get_status())
     pass
