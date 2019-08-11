@@ -105,16 +105,16 @@ def add_player(message):
                 bot.send_message(message.chat.id,
                                  'Максимальное количество игроков достигнуто',
                                  reply_markup=keyboards.begin_keyboard(),
-                                 reply_to_message_id=message.id)
+                                 reply_to_message_id=message.message_id)
             else:
                 games[message.chat.id].add_player(message.from_user.id)
                 bot.send_message(message.chat.id, 'Ты в игре!',
                                  reply_markup=keyboards.begin_keyboard(),
-                                 reply_to_message_id=message.id)
+                                 reply_to_message_id=message.message_id)
         else:
             bot.send_message(message.chat.id, 'Ты уже участвуешь!',
                              reply_markup=keyboards.begin_keyboard(),
-                             reply_to_message_id=message.id)
+                             reply_to_message_id=message.message_id)
         player_status(message)
 
 
@@ -126,7 +126,7 @@ def start_game(message):
     if len(games[chat_id].get_status()['player_hands']) < 2:
         bot.send_message(chat_id, 'Недостаточно игроков',
                          reply_markup=keyboards.begin_keyboard(),
-                         reply_to_message_id=message.id)
+                         reply_to_message_id=message.message_id)
         return
     games[chat_id].start_game()
     bot.send_message(chat_id, 'Погнали!')
@@ -150,7 +150,7 @@ def act(message):
         card_played = str(games[message.chat.id].get_status()['top_card'])
         bot.send_message(message.chat.id, 'Сыгранная карта: ' + card_played,
                          reply_markup=keyboards.game_keyboard(),
-                         reply_to_message_id=message.id)
+                         reply_to_message_id=message.message_id)
 
 
 @bot.message_handler(regexp=r'^Стоп$')
