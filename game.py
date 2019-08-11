@@ -60,6 +60,7 @@ class Game:
                 'n_shurikens': self.n_shurikens,
                 'hp': self.hp,
                 'player_hands': self.player_hands,
+                'player_status': self.player_status,
                 'top_card': self.top_card,
                 'level': self.level}
 
@@ -74,7 +75,6 @@ class Game:
         return self.get_status()
 
     def start_game(self):
-        print(self.n_players)
         if self.status == self.__NOT_STARTED:
             self.status = self.__FREE_CHAT
             if self.n_players == 2:
@@ -94,7 +94,7 @@ class Game:
     def start_level(self):
         if self.status == self.__FREE_CHAT:
             self.level += 1
-            self.status = self.__CONCENTRATION
+            self.status = self.__ACTION
             self.pass_cards(self.level)
             # everyone places their hand on the table
             for player_id in self.player_status.keys():
@@ -104,17 +104,16 @@ class Game:
     # TODO act(self, player_id) -> play the lowest card
     # place a card to the stack
     def act(self, player_id):
-        print(self.player_hands)
-        card = min(self.player_hands[player_id])
-        if self.status == self.__ACTION and card in self.player_hands[player_id]:
+        if self.status == self.__ACTION and self.player_hands[player_id]:
+            card = min(self.player_hands[player_id])
             self.player_hands[player_id].remove(card)
             self.top_card = card
             flag = False
-            for key, hand in self.player_hands:
-                new_hand = set(dropwhile(lambda x: x < card, hand))
-                if new_hand != hand:
+            for player_id in self.player_hands.keys():
+                new_hand = set(dropwhile(lambda x: x < card, self.player_hands[player_id]))
+                if new_hand != self.player_hands[player_id]:
                     flag = True
-                    self.player_hands[key] = new_hand
+                    self.player_hands[player_id] = new_hand
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
@@ -122,15 +121,10 @@ class Game:
                     self.game_over()
             if sum(map(sum, self.player_hands.values())) == 0:
                 self.finish_level()
-        else:
-            print("It was attempted to play a card not being held by the player. " +
-                  "Use 'act(player_id, card, force=True)' " +
-                  "to force play a card.")
-
         return self.get_status()
 
     def place_hand(self, player_id):
-        if self.status == self.__ACTION:
+        if self.status in [self.__CONCENTRATION, self.__ACTION]:
             self.player_status[player_id] = self.__STOP
             self.status = self.__CONCENTRATION
 
@@ -149,11 +143,11 @@ class Game:
         if self.status == self.__ACTION and \
                 self.n_shurikens > 0:
             self.player_status[player_id] = self.__SHURIKEN
-            if self.player_status.values().count(self.__SHURIKEN) == \
+            if list(self.player_status.values()).count(self.__SHURIKEN) == \
                     len(self.player_status.values()):
                 self.n_shurikens -= 1
-                for hand in self.player_hands:
-                    if not hand.empty():
+                for hand in self.player_hands.values():
+                    if hand:
                         hand.remove(min(hand))
                         # TODO send discarded cards in status
                 for player_id in self.player_status.keys():
@@ -182,6 +176,22 @@ class Game:
     def release_hands_all(self):
         for player in self.player_status.keys():
             self.release_hand(player)
+
+    def load_status(self, status_dict):
+        self.game_id = status_dict['game_id']
+        self.n_players = len(status_dict['player_hands'].keys())
+
+        # calculate n_levels
+        self.status = self.__NOT_STARTED
+        self.start_game()
+
+        self.hp = status_dict['hp']
+        self.player_hands = status_dict['player_hands']
+        self.player_status = status_dict['player_status']
+        self.level = status_dict['level']
+        self.status = status_dict['status']
+        self.n_shurikens = status_dict['n_shurikens']
+        self.top_card = status_dict['top_card']
 
 
 if __name__ == '__main__':

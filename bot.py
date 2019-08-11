@@ -74,10 +74,8 @@ def player_status(message):
 
 def start_level(message):
     games[message.chat.id].start_level()
-    bot.send_message(message.chat.id, "КОНЦЕНТРАЦИЯ!",
-                     reply_markup=keyboards.empty_keyboard())
-    time.sleep(3)
-    bot.send_message(message.chat.id, "Можно отпускать руки",
+    bot.send_message(message.chat.id,
+                     "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
                      reply_markup=keyboards.concentration_keyboard())
 
 
