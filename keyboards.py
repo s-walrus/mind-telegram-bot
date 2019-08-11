@@ -15,8 +15,9 @@ def game_keyboard():
     btn_turn = types.KeyboardButton('Ход')
     btn_stop = types.KeyboardButton('Стоп')
     btn_shuriken = types.KeyboardButton('Сюрикен')
+    btn_cancel = types.KeyboardButton('Отменить сюрикен')
     keyboard.row(btn_turn, btn_stop)
-    keyboard.row(btn_shuriken)
+    keyboard.row(btn_shuriken, btn_cancel)
     return keyboard
 
 

@@ -50,12 +50,12 @@ def next_level(message):
     start_level(message)
 
 
-def check_status(message):
-    if games[message.chat.id].get_status()['status'] == __WIN:
+def check_status(status, message):
+    if status['status'] == __WIN:
         win(message)
-    if games[message.chat.id].get_status()['status'] == __LOSE:
+    if status['status'] == __LOSE:
         lose(message)
-    if games[message.chat.id].get_status()['status'] == __FREE_CHAT:
+    if status['status'] == __FREE_CHAT:
         next_level(message)
 
 
@@ -115,7 +115,6 @@ def add_player(message):
             bot.send_message(message.chat.id, 'Ты уже участвуешь!',
                              reply_markup=keyboards.begin_keyboard(),
                              reply_to_message_id=message.message_id)
-        player_status(message)
 
 
 @bot.message_handler(regexp=r'^Начать игру$')
@@ -145,12 +144,15 @@ def end_game(message):
 @bot.message_handler(regexp=r'^Ход$')
 def act(message):
     if games[message.chat.id].get_status()['status'] == __ACTION:
-        games[message.chat.id].act(message.from_user.id)
+        print(message.text)
+        print(games[message.chat.id].get_status())
+        status = games[message.chat.id].act(message.from_user.id)
         player_status(message)
-        card_played = str(games[message.chat.id].get_status()['top_card'])
+        card_played = str(status['top_card'])
         bot.send_message(message.chat.id, 'Сыгранная карта: ' + card_played,
                          reply_markup=keyboards.game_keyboard(),
                          reply_to_message_id=message.message_id)
+        check_status(status, message)
 
 
 @bot.message_handler(regexp=r'^Стоп$')
@@ -158,7 +160,7 @@ def stop(message):
     print(message.text)
     print(games[message.chat.id].get_status())
     bot.send_message(message.chat.id,
-                     'СТОП! Все игроки - нажмите кнопку "CТОП!" на своих устройствах!')
+                     'СТОП! Все игроки - нажмите кнопку "CТОП!" на своих устройствах!', reply_markup=keyboards.place_hand_keyboard())
     games[message.chat.id].stop(message.from_user.id)
 
 
@@ -183,21 +185,23 @@ def player_concentration(message):
     if games[message.chat.id].get_status()['status'] == __ACTION:
         bot.send_message(message.chat.id, "Можно играть!",
                          reply_markup=keyboards.game_keyboard())
+        player_status(message)
 
 
 @bot.message_handler(regexp=r'^Сюрикен$')
 def shuriken(message):
     print(message.text)
     print(games[message.chat.id].get_status())
-    games[message.chat.id].add_shuriken(message.from_user.id)
+    games[message.chat.id].vote_shuriken(message.from_user.id)
     if 1 == 1:
         bot.send_message(message.chat.id, "Используем сюрикен")
 
 
-@bot.message_handler(regexp=r'^Отменить$')
+@bot.message_handler(regexp=r'^Отменить сюрикен$')
 def cancel(message):
     print(message.text)
     print(games[message.chat.id].get_status())
+    games[message.chat.id].unvote_shuriken(message.from_user.id)
     pass
 
 
