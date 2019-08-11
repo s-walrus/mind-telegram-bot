@@ -21,9 +21,9 @@ def player_status(message):
 
 def start_level(message):
     games[message.chat.id].start_level()
-    bot.send_message(message.chat.id, "КОНЦЕНТРАЦИЯ")
-    time.sleep(5)
-    bot.send_message(message.chat.id, "Можно отпускать руки", reply_markup=keyboards.concentration_keyboard())
+    bot.send_message(message.chat.id,
+                     "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
+                     reply_markup=keyboards.concentration_keyboard())
 
 
 @bot.message_handler(commands=['start'])
