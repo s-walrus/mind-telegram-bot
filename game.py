@@ -60,7 +60,8 @@ class Game:
                 'n_shurikens': self.n_shurikens,
                 'hp': self.hp,
                 'player_hands': self.player_hands,
-                'top_card': self.top_card}
+                'top_card': self.top_card,
+                'level': self.level}
 
     # add a player to the unstarted game session
     def add_player(self, player_id):
