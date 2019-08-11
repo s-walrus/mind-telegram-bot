@@ -42,5 +42,5 @@ def concentration_keyboard():
 
 
 def empty_keyboard():
-    keyboard = types.ReplyKeyboardMarkup()
+    keyboard = types.ReplyKeyboardRemove()
     return keyboard
