@@ -161,14 +161,14 @@ def stop(message):
     print(games[message.chat.id].__get_status())
     bot.send_message(message.chat.id,
                      'СТОП! Все игроки - нажмите кнопку "CТОП!" на своих устройствах!', reply_markup=keyboards.place_hand_keyboard())
-    games[message.chat.id].stop(message.from_user.id)
+    games[message.chat.id].place_hand(message.from_user.id)
 
 
 @bot.message_handler(regexp=r'^СТОП!$')
 def player_stop(message):
     print(message.text)
     print(games[message.chat.id].__get_status())
-    games[message.chat.id].stop(message.from_user.id)
+    games[message.chat.id].place_hand(message.from_user.id)
     if games[message.chat.id].__check_stop_status():
         bot.send_message(message.chat.id, "Продолжаем!",
                          reply_markup=keyboards.game_keyboard())

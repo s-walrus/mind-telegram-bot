@@ -71,6 +71,7 @@ class Game:
 
     # place a card to the stack
     def act(self, player_id):
+        discarded = dict.fromkeys(self.player_status.keys())
         if self.status == self._ACTION and self.player_hands[player_id]:
             card = min(self.player_hands[player_id])
             self.player_hands[player_id].remove(card)
@@ -80,20 +81,21 @@ class Game:
                 new_hand = set(dropwhile(lambda x: x < card, self.player_hands[player_id]))
                 if new_hand != self.player_hands[player_id]:
                     flag = True
+                    discarded[player_id] = self.player_status[player_id] - new_hand
                     self.player_hands[player_id] = new_hand
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
                     self.status = self._LOSE
-                    self.game_over()
             if sum(map(sum, self.player_hands.values())) == 0:
                 self.__finish_level()
-        return self.__get_status()
+        return self.__get_status(discarded=discarded)
 
     def place_hand(self, player_id):
         if self.status in [self._CONCENTRATION, self._ACTION]:
             self.player_status[player_id] = self._STOP
             self.status = self._CONCENTRATION
+        return self.__get_status()
 
     def release_hand(self, player_id):
         if self.status == self._CONCENTRATION:
@@ -102,24 +104,20 @@ class Game:
                 self.status = self._ACTION
         return self.__get_status()
 
-    def stop(self, player_id):
-        self.place_hand(player_id)
-        return self.__get_status()
-
     def vote_shuriken(self, player_id):
+        discarded = dict.fromkeys(self.player_status.keys())
         if self.status == self._ACTION and \
                 self.n_shurikens > 0:
             self.player_status[player_id] = self._SHURIKEN
             if list(self.player_status.values()).count(self._SHURIKEN) == \
                     len(self.player_status.values()):
                 self.n_shurikens -= 1
-                for hand in self.player_hands.values():
-                    if hand:
-                        hand.remove(min(hand))
-                        # TODO send discarded cards in status
-                for player_id in self.player_status.keys():
+                for player_id in self.player_hands.keys():
+                    if self.player_hands[player_id]:
+                        discarded[player_id] = {min(self.player_hands[player_id])}
+                        self.player_hands[player_id].remove(min(self.player_hands[player_id]))
                     self.player_status[player_id] = self._NORMAL
-        return self.__get_status()
+        return self.__get_status(discarded=discarded)
 
     def unvote_shuriken(self, player_id):
         if self.player_status[player_id] == self._SHURIKEN:
@@ -179,8 +177,8 @@ class Game:
                 self.status = self._FREE_CHAT
 
     # returns the current game state as dict object
-    # this object is returned by every public function
-    def __get_status(self):
+    # this object must be returned by every public function
+    def __get_status(self, discarded={}):
         return {'status': self.status,
                 'game_id': self.game_id,
                 'n_shurikens': self.n_shurikens,
@@ -188,7 +186,9 @@ class Game:
                 'player_hands': self.player_hands,
                 'player_status': self.player_status,
                 'top_card': self.top_card,
-                'level': self.level}
+                'level': self.level,
+                'discarded': {player_id: discarded[player_id]
+                              for player_id in self.player_status.keys()}}
 
 
 if __name__ == '__main__':
