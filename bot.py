@@ -1,5 +1,7 @@
 import telebot
 
+import time
+
 import game
 import keyboards
 
@@ -42,11 +44,12 @@ def next_level(message):
     status = games[message.chat.id].get_status()
     prizes = {1: "Сюрикен", 2: "Дополнительная жизнь", 0: "Ничего"}
     message_text = '''Уровень {} завершён!
-    Ваша награда: {}
-    Переходим к следующему уровню.
+Ваша награда: {}
+Переходим к следующему уровню.
     '''.format(status['level'], prizes[status['level']])
     bot.send_message(message.chat.id, message_text,
                      reply_markup=keyboards.empty_keyboard())
+    time.sleep(3)
     start_level(message)
 
 
@@ -68,6 +71,7 @@ def player_status(message):
             bot.send_message(message.chat.id,
                              'Игрок с id {} не начал диалог с ботом'.format(
                                  player_id))
+    for
 
 
 def start_level(message):
@@ -179,10 +183,10 @@ def player_stop(message):
 def player_concentration(message):
     print(message.text)
     print(games[message.chat.id].get_status())
-    games[message.chat.id].release_hand(message.from_user.id)
+    status = games[message.chat.id].release_hand(message.from_user.id)
     print('отпустил руку')
     print(games[message.chat.id].get_status())
-    if games[message.chat.id].get_status()['status'] == __ACTION:
+    if status['status'] == __ACTION:
         bot.send_message(message.chat.id, "Можно играть!",
                          reply_markup=keyboards.game_keyboard())
         player_status(message)
@@ -192,9 +196,9 @@ def player_concentration(message):
 def shuriken(message):
     print(message.text)
     print(games[message.chat.id].get_status())
-    games[message.chat.id].vote_shuriken(message.from_user.id)
-    if 1 == 1:
-        bot.send_message(message.chat.id, "Используем сюрикен")
+    status = games[message.chat.id].vote_shuriken(message.from_user.id)
+    if status['action'] == __SHURIKEN:
+        bot.send_message(message.chat.id, "Используем сюрикен!")
 
 
 @bot.message_handler(regexp=r'^Отменить сюрикен$')

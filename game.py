@@ -127,6 +127,7 @@ class Game:
         if self.status in [self.__CONCENTRATION, self.__ACTION]:
             self.player_status[player_id] = self.__STOP
             self.status = self.__CONCENTRATION
+        return self.get_status()
 
     def release_hand(self, player_id):
         if self.status == self.__CONCENTRATION:
