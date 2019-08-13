@@ -62,8 +62,8 @@ def check_status(status, message):
         next_level(message)
 
 
-def player_status(message):
-    for player_id, hand in games[message.chat.id].player_hands.items():
+def player_status(status, message):
+    for player_id, hand in status['player_hands'].items():
         text = 'Твоя рука:\n' + ' '.join([str(item) for item in hand])
         try:
             bot.send_message(player_id, text)
@@ -71,7 +71,6 @@ def player_status(message):
             bot.send_message(message.chat.id,
                              'Игрок с id {} не начал диалог с ботом'.format(
                                  player_id))
-    for
 
 
 def start_level(message):
@@ -151,7 +150,7 @@ def act(message):
         print(message.text)
         print(games[message.chat.id].__get_status())
         status = games[message.chat.id].act(message.from_user.id)
-        player_status(message)
+        player_status(status, message)
         card_played = str(status['top_card'])
         bot.send_message(message.chat.id, 'Сыгранная карта: ' + card_played,
                          reply_markup=keyboards.game_keyboard(),
@@ -182,7 +181,6 @@ def player_stop(message):
 @bot.message_handler(regexp='Отпустить руку')
 def player_concentration(message):
     print(message.text)
-<<<<<<< HEAD
     print(games[message.chat.id].get_status())
     status = games[message.chat.id].release_hand(message.from_user.id)
     print('отпустил руку')
@@ -190,7 +188,7 @@ def player_concentration(message):
     if status['status'] == __ACTION:
         bot.send_message(message.chat.id, "Можно играть!",
                          reply_markup=keyboards.game_keyboard())
-        player_status(message)
+        player_status(status, message)
 
 
 @bot.message_handler(regexp=r'^Сюрикен$')
@@ -200,13 +198,17 @@ def shuriken(message):
     status = games[message.chat.id].vote_shuriken(message.from_user.id)
     if status['action'] == __SHURIKEN:
         bot.send_message(message.chat.id, "Используем сюрикен!")
+        cards = 'Сброшенные карты: ' + ', '.join(status['discarded'])
+        bot.send_message(message.chat.id, cards, reply_markup=keyboards.game_keyboard())
+        player_status(status, message)
+        check_status(status, message)
 
 
 @bot.message_handler(regexp=r'^Отменить сюрикен$')
 def cancel(message):
     print(message.text)
     print(games[message.chat.id].__get_status())
-    games[message.chat.id].unvote_shuriken(message.from_user.id)
+    games[message.chat.id].release_hand(message.from_user.id)
     pass
 
 
