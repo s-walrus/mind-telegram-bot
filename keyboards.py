@@ -13,7 +13,7 @@ def begin_keyboard():
 def game_keyboard():
     keyboard = types.ReplyKeyboardMarkup()
     btn_turn = types.KeyboardButton('Ход')
-    btn_stop = types.KeyboardButton('Стоп')
+    btn_stop = types.KeyboardButton('СТОП!')
     btn_shuriken = types.KeyboardButton('Сюрикен')
     btn_cancel = types.KeyboardButton('Отменить сюрикен')
     keyboard.row(btn_turn, btn_stop)
@@ -24,7 +24,8 @@ def game_keyboard():
 def place_hand_keyboard():
     keyboard = types.ReplyKeyboardMarkup()
     btn_stop = types.KeyboardButton('СТОП!')
-    keyboard.row(btn_stop)
+    btn_remove = types.KeyboardButton('Отпустить руку')
+    keyboard.row(btn_stop, btn_remove)
     return keyboard
 
 

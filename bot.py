@@ -54,8 +54,7 @@ def lose(message):
     games.pop(message.chat.id)
 
 
-def next_level(message):
-    status = games[message.chat.id].get_status()
+def next_level(status, message):
     prizes = {1: "Сюрикен", 2: "Дополнительная жизнь", 0: "Ничего"}
     message_text = '''Уровень {} завершён!
 Ваша награда: {}
@@ -73,7 +72,7 @@ def check_status(status, message):
     if status['status'] == LOSE:
         lose(message)
     if status['status'] == FREE_CHAT:
-        next_level(message)
+        next_level(status, message)
 
 
 def player_status(status, message):
@@ -160,22 +159,12 @@ def act(message):
     check_status(status, message)
 
 
-@bot.message_handler(regexp=r'^Стоп$')
+@bot.message_handler(regexp=r'^СТОП!$')
 def stop(message):
     bot.send_message(message.chat.id,
-                     'СТОП! Все игроки - нажмите кнопку "CТОП!" на своих устройствах!',
+                     'СТОП! Если хотите продолжить - все должны отпустить руки',
                      reply_markup=keyboards.place_hand_keyboard())
     games[message.chat.id].place_hand(message.from_user.id)
-
-
-@bot.message_handler(regexp=r'^СТОП!$')
-def player_stop(message):
-    print(message.text)
-    print(games[message.chat.id].get_status())
-    status = games[message.chat.id].place_hand(message.from_user.id)
-    if status['response'] == CONCENTRATION_BEGINS:
-        bot.send_message(message.chat.id, "Можно отпускать руки",
-                         reply_markup=keyboards.game_keyboard())
 
 
 @bot.message_handler(regexp='Отпустить руку')
@@ -183,14 +172,14 @@ def player_concentration(message):
     status = games[message.chat.id].release_hand(message.from_user.id)
     if status['response'] == CONCENTRATION_ENDS:
         bot.send_message(message.chat.id, "Можно играть!",
-                         reply_markup=keyboards.concentration_keyboard())
+                         reply_markup=keyboards.game_keyboard())
         player_status(status, message)
 
 
 @bot.message_handler(regexp=r'^Сюрикен$')
 def shuriken(message):
     status = games[message.chat.id].vote_shuriken(message.from_user.id)
-    if status['action'] == SHURIKEN:
+    if status['response'] == SHURIKEN_THROWN:
         bot.send_message(message.chat.id, "Используем сюрикен!")
         cards = 'Сброшенные карты: ' + ', '.join(status['discarded'])
         bot.send_message(message.chat.id, cards,
