@@ -156,6 +156,12 @@ def act(message):
         bot.send_message(message.chat.id, 'Сыгранная карта: ' + card_played,
                          reply_markup=keyboards.game_keyboard(),
                          reply_to_message_id=message.message_id)
+        if len(status['discarded']) != 0:
+            bot.send_message(message.chat.id, "Упс, ошибочка вышла :(")
+            cards = 'Сброшенные карты: ' + ', '.join(status['discarded'])
+            bot.send_message(message.chat.id, cards,
+                             reply_markup=keyboards.game_keyboard())
+
     check_status(status, message)
 
 

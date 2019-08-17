@@ -118,7 +118,7 @@ class Game:
                 new_hand = set(dropwhile(lambda x: x < card, self.player_hands[player_id]))
                 if new_hand != self.player_hands[player_id]:
                     flag = True
-                    discarded[player_id] = self.player_status[player_id] - new_hand
+                    discarded[player_id] = self.player_hands[player_id] - new_hand
                     self.player_hands[player_id] = new_hand
             if flag:
                 self.hp -= 1
