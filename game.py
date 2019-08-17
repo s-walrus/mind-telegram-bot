@@ -108,7 +108,7 @@ class Game:
     # place a card to the stack
     def act(self, player_id):
         response = CARD_PLAYED
-        discarded = dict.fromkeys(self.player_status.keys())
+        discarded = {player_id: set() for player_id in self.player_status.keys()}
         if self.status == ACTION and self.player_hands[player_id]:
             card = min(self.player_hands[player_id])
             self.player_hands[player_id].remove(card)
