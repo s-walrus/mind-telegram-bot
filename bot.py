@@ -161,6 +161,7 @@ def act(message):
             ll = status['discarded']
             cards = [str(el) for lst in ll for el in lst]
             cards = 'Сброшенные карты: ' + ', '.join(cards)
+
             bot.send_message(message.chat.id, cards,
                              reply_markup=keyboards.game_keyboard())
 
