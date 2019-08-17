@@ -27,6 +27,10 @@ VOTED_FOR_SHURIKEN = 9
 SHURIKEN_THROWN = 10
 
 
+def throw_warning(text):
+    print('WARNING: ' + text)
+
+
 class Game:
     # initialized on init
     game_id = None
@@ -50,12 +54,17 @@ class Game:
     def add_player(self, player_id):
         response = PLAYER_ADDED
         if self.status == NOT_STARTED:
-            self.player_hands[player_id] = set()
-            self.player_status[player_id] = NORMAL
-            self.n_players += 1
+            if player_id in self.player_hands.keys():
+                response = WARNING
+                throw_warning('The player has been already added to the game. '
+                              'This call is ignored.')
+            else:
+                self.player_hands[player_id] = set()
+                self.player_status[player_id] = NORMAL
+                self.n_players += 1
         else:
             response = WARNING
-            raise Warning('A player was added after the game was started. '
+            throw_warning('A player was added after the game was started. '
                           'This player will not take part in this game.')
         return self.__get_status(response)
 
@@ -76,7 +85,7 @@ class Game:
                 raise ValueError("n_levels should be either 2, 3, or 4")
         else:
             response = WARNING
-            raise Warning('It was tried to start the game when it had already been started. '
+            throw_warning('It was tried to start the game when it had already been started. '
                           'This call is ignored.')
         return self.__get_status(response)
 
@@ -92,7 +101,7 @@ class Game:
                 self.place_hand(player_id)
         else:
             response = WARNING
-            raise Warning('It was tried to start a level when other level is not finished. '
+            throw_warning('It was tried to start a level when other level is not finished. '
                           'This call is ignored.')
         return self.__get_status(response)
 
@@ -119,7 +128,7 @@ class Game:
                 self.__finish_level()
         else:
             response = WARNING
-            raise Warning('Something went wrong when playing a card. '
+            throw_warning('Something went wrong when playing a card. '
                           'This call is ignored.')
         return self.__get_status(response, discarded=discarded)
 
@@ -132,7 +141,7 @@ class Game:
             self.status = CONCENTRATION
         else:
             response = WARNING
-            raise Warning('Hand was placed during wrong game phase. '
+            throw_warning('Hand was placed during wrong game phase. '
                           'This call is ignored.')
         return self.__get_status(response)
 
@@ -149,7 +158,7 @@ class Game:
             self.player_status[player_id] = NORMAL
         else:
             response = WARNING
-            raise Warning('Player s hand had been already released. '
+            throw_warning('Player s hand had been already released. '
                           'This call is ignored.')
         return self.__get_status(response)
 
@@ -170,7 +179,7 @@ class Game:
                     self.player_status[player_id] = NORMAL
         else:
             response = WARNING
-            raise Warning('Something went wrong during voting for shuriken. '
+            throw_warning('Something went wrong during voting for shuriken. '
                           'This call is ignored.')
         return self.__get_status(response, discarded=discarded)
 
