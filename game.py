@@ -20,9 +20,9 @@ GAME_STARTED = 2
 LEVEL_STARTED = 3
 CARD_PLAYED = 4
 HAND_PLACED = 5
-CONCENTRATION_BEGAN = 6
+CONCENTRATION_BEGINS = 6
 HAND_RELEASED = 7
-CONCENTRATION_ENDED = 8
+CONCENTRATION_ENDS = 8
 VOTED_FOR_SHURIKEN = 9
 SHURIKEN_THROWN = 10
 
@@ -137,7 +137,7 @@ class Game:
         if self.status in [CONCENTRATION, ACTION]:
             self.player_status[player_id] = STOP
             if self.status != CONCENTRATION:
-                response = CONCENTRATION_BEGAN
+                response = CONCENTRATION_BEGINS
             self.status = CONCENTRATION
         else:
             response = WARNING
@@ -153,7 +153,7 @@ class Game:
             self.player_status[player_id] = NORMAL
             if STOP not in self.player_status.values():
                 self.status = ACTION
-                response = CONCENTRATION_ENDED
+                response = CONCENTRATION_ENDS
         elif self.player_status[player_id] == SHURIKEN:
             self.player_status[player_id] = NORMAL
         else:
