@@ -156,9 +156,11 @@ def act(message):
         bot.send_message(message.chat.id, 'Сыгранная карта: ' + card_played,
                          reply_markup=keyboards.game_keyboard(),
                          reply_to_message_id=message.message_id)
-        if len(status['discarded']) != 0:
+        if sum(map(sum, status['discarded'].values())) == 0:
             bot.send_message(message.chat.id, "Упс, ошибочка вышла :(")
-            cards = 'Сброшенные карты: ' + ', '.join(status['discarded'])
+            ll = status['discarded']
+            cards = [str(el) for lst in ll for el in lst]
+            cards = 'Сброшенные карты: ' + ', '.join(cards)
             bot.send_message(message.chat.id, cards,
                              reply_markup=keyboards.game_keyboard())
 
@@ -187,7 +189,9 @@ def shuriken(message):
     status = games[message.chat.id].vote_shuriken(message.from_user.id)
     if status['response'] == SHURIKEN_THROWN:
         bot.send_message(message.chat.id, "Используем сюрикен!")
-        cards = 'Сброшенные карты: ' + ', '.join(status['discarded'])
+        ll = status['discarded']
+        cards = [str(el) for lst in ll for el in lst]
+        cards = 'Сброшенные карты: ' + ', '.join(cards)
         bot.send_message(message.chat.id, cards,
                          reply_markup=keyboards.game_keyboard())
         player_status(status, message)
