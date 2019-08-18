@@ -127,7 +127,8 @@ class Game:
                 self.hp -= 1
                 if self.hp < 0:
                     self.status = LOSE
-            if sum(map(sum, self.player_hands.values())) == 0:
+            if sum(map(sum, self.player_hands.values())) == 0 and \
+               self.hp >= 0:
                 self.__finish_level()
         else:
             response = WARNING
@@ -180,6 +181,8 @@ class Game:
                         discarded[player_id] = {min(self.player_hands[player_id])}
                         self.player_hands[player_id].remove(min(self.player_hands[player_id]))
                     self.player_status[player_id] = NORMAL
+            if sum(map(sum, self.player_hands.values())) == 0:
+                self.__finish_level()
         else:
             response = WARNING
             throw_warning('Something went wrong during voting for shuriken. '
