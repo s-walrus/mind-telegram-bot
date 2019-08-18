@@ -157,7 +157,7 @@ def act(message):
                          reply_markup=keyboards.game_keyboard(),
                          reply_to_message_id=message.message_id)
         print(sum(map(sum, status['discarded'].values())))
-        if sum(map(sum, status['discarded'].values())) == 0:
+        if sum(map(sum, status['discarded'].values())) != 0:
             bot.send_message(message.chat.id, "Упс, ошибочка вышла :(")
             ll = status['discarded'].values()
             cards = [str(el) for lst in ll for el in lst]
