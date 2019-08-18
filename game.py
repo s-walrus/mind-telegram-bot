@@ -82,7 +82,9 @@ class Game:
                 self.n_levels = 8
                 self.hp = 4
             else:
-                raise ValueError("n_levels should be either 2, 3, or 4")
+                response = WARNING
+                throw_warning("n_levels should be either 2, 3, or 4. "
+                              "This call is ignored.")
         else:
             response = WARNING
             throw_warning('It was tried to start the game when it had already been started. '
