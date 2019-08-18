@@ -167,7 +167,7 @@ class Game:
 
     def vote_shuriken(self, player_id):
         response = VOTED_FOR_SHURIKEN
-        discarded = dict.fromkeys(self.player_status.keys())
+        discarded = {player_id: set() for player_id in self.player_status.keys()}
         if self.status == ACTION and \
                 self.n_shurikens > 0:
             self.player_status[player_id] = SHURIKEN
