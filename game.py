@@ -71,7 +71,6 @@ class Game:
     def start_game(self):
         response = GAME_STARTED
         if self.status == NOT_STARTED:
-            self.status = FREE_CHAT
             if self.n_players == 2:
                 self.n_levels = 12
                 self.hp = 2
@@ -85,6 +84,8 @@ class Game:
                 response = WARNING
                 throw_warning("n_levels should be either 2, 3, or 4. "
                               "This call is ignored.")
+            if response != WARNING:
+                self.status = FREE_CHAT
         else:
             response = WARNING
             throw_warning('It was tried to start the game when it had already been started. '
