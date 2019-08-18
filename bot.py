@@ -142,9 +142,9 @@ def start_game(message):
 
 @bot.message_handler(regexp=r'^Закончить игру$')
 def end_game(message):
-    games[message.chat.id].end_game()
     bot.send_message(message.chat.id, 'Игра закончена',
                      reply_markup=keyboards.begin_keyboard())
+    games.pop[message.chat.id]
 
 
 @bot.message_handler(regexp=r'^Ход$')
