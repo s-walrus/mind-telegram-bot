@@ -71,7 +71,6 @@ class Game:
     def start_game(self):
         response = GAME_STARTED
         if self.status == NOT_STARTED:
-            self.status = FREE_CHAT
             if self.n_players == 2:
                 self.n_levels = 12
                 self.hp = 2
@@ -85,6 +84,8 @@ class Game:
                 response = WARNING
                 throw_warning("n_levels should be either 2, 3, or 4. "
                               "This call is ignored.")
+            if response != WARNING:
+                self.status = FREE_CHAT
         else:
             response = WARNING
             throw_warning('It was tried to start the game when it had already been started. '
@@ -126,7 +127,8 @@ class Game:
                 self.hp -= 1
                 if self.hp < 0:
                     self.status = LOSE
-            if sum(map(sum, self.player_hands.values())) == 0:
+            if sum(map(sum, self.player_hands.values())) == 0 and \
+               self.hp >= 0:
                 self.__finish_level()
         else:
             response = WARNING
@@ -166,7 +168,7 @@ class Game:
 
     def vote_shuriken(self, player_id):
         response = VOTED_FOR_SHURIKEN
-        discarded = dict.fromkeys(self.player_status.keys())
+        discarded = {player_id: set() for player_id in self.player_status.keys()}
         if self.status == ACTION and \
                 self.n_shurikens > 0:
             self.player_status[player_id] = SHURIKEN
@@ -179,6 +181,8 @@ class Game:
                         discarded[player_id] = {min(self.player_hands[player_id])}
                         self.player_hands[player_id].remove(min(self.player_hands[player_id]))
                     self.player_status[player_id] = NORMAL
+            if sum(map(sum, self.player_hands.values())) == 0:
+                self.__finish_level()
         else:
             response = WARNING
             throw_warning('Something went wrong during voting for shuriken. '

@@ -191,7 +191,7 @@ def shuriken(message):
     status = games[message.chat.id].vote_shuriken(message.from_user.id)
     if status['response'] == SHURIKEN_THROWN:
         bot.send_message(message.chat.id, "Используем сюрикен!")
-        ll = status['discarded']
+        ll = status['discarded'].values()
         cards = [str(el) for lst in ll for el in lst]
         cards = 'Сброшенные карты: ' + ', '.join(cards)
         bot.send_message(message.chat.id, cards,
