@@ -59,7 +59,7 @@ def next_level(status, message):
     message_text = '''Уровень {} завершён!
 Ваша награда: {}
 Переходим к следующему уровню.
-    '''.format(status['level'], prizes[status['level']])
+    '''.format(status['level'], prizes[status['level'] - 1])
     bot.send_message(message.chat.id, message_text,
                      reply_markup=keyboards.empty_keyboard())
     time.sleep(3)
