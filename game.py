@@ -1,7 +1,6 @@
 import random
 from itertools import dropwhile
 
-
 # game phases
 NOT_STARTED = 0
 FREE_CHAT = 1
@@ -88,8 +87,9 @@ class Game:
                 self.status = FREE_CHAT
         else:
             response = WARNING
-            throw_warning('It was tried to start the game when it had already been started. '
-                          'This call is ignored.')
+            throw_warning(
+                'It was tried to start the game when it had already been started. '
+                'This call is ignored.')
         return self.__get_status(response)
 
     # proceed to the next level
@@ -104,31 +104,35 @@ class Game:
                 self.place_hand(player_id)
         else:
             response = WARNING
-            throw_warning('It was tried to start a level when other level is not finished. '
-                          'This call is ignored.')
+            throw_warning(
+                'It was tried to start a level when other level is not finished. '
+                'This call is ignored.')
         return self.__get_status(response)
 
     # place a card to the stack
     def act(self, player_id):
         response = CARD_PLAYED
-        discarded = {player_id: set() for player_id in self.player_status.keys()}
+        discarded = {player_id: set() for player_id in
+                     self.player_status.keys()}
         if self.status == ACTION and self.player_hands[player_id]:
             card = min(self.player_hands[player_id])
             self.player_hands[player_id].remove(card)
             self.top_card = card
             flag = False
             for player_id in self.player_hands.keys():
-                new_hand = set(dropwhile(lambda x: x < card, self.player_hands[player_id]))
+                new_hand = set(
+                    dropwhile(lambda x: x < card, self.player_hands[player_id]))
                 if new_hand != self.player_hands[player_id]:
                     flag = True
-                    discarded[player_id] = self.player_hands[player_id] - new_hand
+                    discarded[player_id] = self.player_hands[
+                                               player_id] - new_hand
                     self.player_hands[player_id] = new_hand
             if flag:
                 self.hp -= 1
                 if self.hp < 0:
                     self.status = LOSE
             if sum(map(sum, self.player_hands.values())) == 0 and \
-               self.hp >= 0:
+                    self.hp >= 0:
                 self.__finish_level()
         else:
             response = WARNING
@@ -168,7 +172,8 @@ class Game:
 
     def vote_shuriken(self, player_id):
         response = VOTED_FOR_SHURIKEN
-        discarded = {player_id: set() for player_id in self.player_status.keys()}
+        discarded = {player_id: set() for player_id in
+                     self.player_status.keys()}
         if self.status == ACTION and \
                 self.n_shurikens > 0:
             self.player_status[player_id] = SHURIKEN
@@ -178,8 +183,10 @@ class Game:
                 self.n_shurikens -= 1
                 for player_id in self.player_hands.keys():
                     if self.player_hands[player_id]:
-                        discarded[player_id] = {min(self.player_hands[player_id])}
-                        self.player_hands[player_id].remove(min(self.player_hands[player_id]))
+                        discarded[player_id] = {
+                            min(self.player_hands[player_id])}
+                        self.player_hands[player_id].remove(
+                            min(self.player_hands[player_id]))
                     self.player_status[player_id] = NORMAL
             if sum(map(sum, self.player_hands.values())) == 0:
                 self.__finish_level()
@@ -230,7 +237,8 @@ class Game:
         deck = list(range(1, 101))
         random.shuffle(deck)
         for i, player_id in enumerate(self.player_hands.keys()):
-            self.player_hands[player_id] = set(deck[i * n_cards: (i + 1) * n_cards])
+            self.player_hands[player_id] = sorted(set(
+                deck[i * n_cards: (i + 1) * n_cards]))
 
     # finish the current level
     def __finish_level(self):

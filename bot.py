@@ -87,10 +87,17 @@ def player_status(status, message):
 
 
 def start_level(message):
-    games[message.chat.id].start_level()
-    bot.send_message(message.chat.id,
+    status = games[message.chat.id].start_level()
+    if status['response'] == LEVEL_STARTED:
+        bot.send_message(message.chat.id,
                      "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
                      reply_markup=keyboards.concentration_keyboard())
+        player_status(status, message)
+    else:
+        bot.send_message(message.chat.id,
+                         "Что-то пошло не так :(",
+                         reply_markup=keyboards.empty_keyboard())
+        print(status)
 
 
 @bot.message_handler(commands=['start'])
