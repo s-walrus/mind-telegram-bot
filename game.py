@@ -58,7 +58,7 @@ class Game:
                 throw_warning('The player has been already added to the game. '
                               'This call is ignored.')
             else:
-                self.player_hands[player_id] = set()
+                self.player_hands[player_id] = list()
                 self.player_status[player_id] = NORMAL
                 self.n_players += 1
         else:
@@ -112,7 +112,7 @@ class Game:
     # place a card to the stack
     def act(self, player_id):
         response = CARD_PLAYED
-        discarded = {player_id: set() for player_id in
+        discarded = {player_id: list() for player_id in
                      self.player_status.keys()}
         if self.status == ACTION and self.player_hands[player_id]:
             card = min(self.player_hands[player_id])
@@ -120,12 +120,13 @@ class Game:
             self.top_card = card
             flag = False
             for player_id in self.player_hands.keys():
-                new_hand = set(
+                new_hand = list(
                     dropwhile(lambda x: x < card, self.player_hands[player_id]))
                 if new_hand != self.player_hands[player_id]:
                     flag = True
-                    discarded[player_id] = self.player_hands[
-                                               player_id] - new_hand
+                    discarded[player_id] = [item for item in
+                                            self.player_hands[player_id] if
+                                            item not in new_hand]
                     self.player_hands[player_id] = new_hand
             if flag:
                 self.hp -= 1
@@ -172,7 +173,7 @@ class Game:
 
     def vote_shuriken(self, player_id):
         response = VOTED_FOR_SHURIKEN
-        discarded = {player_id: set() for player_id in
+        discarded = {player_id: list() for player_id in
                      self.player_status.keys()}
         if self.status == ACTION and \
                 self.n_shurikens > 0:
@@ -183,8 +184,8 @@ class Game:
                 self.n_shurikens -= 1
                 for player_id in self.player_hands.keys():
                     if self.player_hands[player_id]:
-                        discarded[player_id] = {
-                            min(self.player_hands[player_id])}
+                        discarded[player_id] = [
+                            min(self.player_hands[player_id])]
                         self.player_hands[player_id].remove(
                             min(self.player_hands[player_id]))
                     self.player_status[player_id] = NORMAL
@@ -240,9 +241,7 @@ class Game:
             self.player_hands[player_id] = sorted(
                 deck[i * n_cards: (i + 1) * n_cards])
             print(self.player_hands[player_id])
-            self.player_hands[player_id] = set(self.player_hands[player_id])
-            print("as set: ", self.player_hands[player_id])
-
+            print("as set: ", set(self.player_hands[player_id]))
 
     # finish the current level
     def __finish_level(self):
