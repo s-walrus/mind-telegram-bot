@@ -237,7 +237,7 @@ class Game:
         deck = list(range(1, 101))
         random.shuffle(deck)
         for i, player_id in enumerate(self.player_hands.keys()):
-            self.player_hands[player_id] = sorted(set(
+            self.player_hands[player_id] = set(sorted(
                 deck[i * n_cards: (i + 1) * n_cards]))
 
     # finish the current level
