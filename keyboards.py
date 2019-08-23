@@ -50,6 +50,6 @@ def empty_keyboard():
 
 def start_level_keyboard():
     keyboard = types.ReplyKeyboardMarkup()
-    btn_start_level = types.KeyboardButton()
+    btn_start_level = types.KeyboardButton('Начать уровень')
     keyboard.row(btn_start_level)
     return keyboard
