@@ -126,7 +126,7 @@ def start(message):
         games[message.chat.id]
         pass
     except KeyError:
-        if message.chat.id == message.from_user:
+        if message.chat.id == message.from_user.id:
             bot.send_message(message.chat.id,
                              'Отлично, теперь я могу писать тебе сообщения! '
                              'Сюда ты будешь получать информацию о своих '
