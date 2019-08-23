@@ -181,8 +181,9 @@ def start_next_level(message):
 
 @bot.message_handler(regexp=r'^Закончить игру$')
 def end_game(message):
-    bot.send_message(message.chat.id, 'Игра закончена',
-                     reply_markup=keyboards.begin_keyboard())
+    bot.send_message(message.chat.id,
+                     'Игра закончена. Чтобы начать новую игру, напишите /start',
+                     reply_markup=keyboards.empty_keyboard())
     games.pop(message.chat.id)
 
 
