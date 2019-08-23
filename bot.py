@@ -55,7 +55,7 @@ def lose(message):
 
 def next_level(status, message):
     rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
-    prizes = {1: "Сюрикен", 2: "Дополнительная жизнь", 0: "Ничего"}
+    prizes = {2: "Сюрикен", 1: "Дополнительная жизнь", 0: "Ничего"}
     message_text = '''Уровень {} завершён!
 Ваша награда: {}
 Чтобы перейти к следующему уровню, нажмите "Начать уровень".
@@ -115,8 +115,7 @@ def start_level(message):
         player_status(status, message)
     else:
         bot.send_message(message.chat.id,
-                         "Что-то пошло не так :(",
-                         reply_markup=keyboards.empty_keyboard())
+                         "Что-то пошло не так :(")
         print(status)
 
 
