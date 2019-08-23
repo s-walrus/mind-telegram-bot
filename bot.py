@@ -121,6 +121,7 @@ def start_level(message):
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    print(games)
     try:
         games[message.chat.id]
         pass
@@ -185,6 +186,7 @@ def end_game(message):
                      'Игра закончена. Чтобы начать новую игру, напишите /start',
                      reply_markup=keyboards.empty_keyboard())
     games.pop(message.chat.id)
+    print(games)
 
 
 @bot.message_handler(regexp=r'^Ход$')
