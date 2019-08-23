@@ -251,6 +251,10 @@ class Game:
                 self.status = WIN
             else:
                 self.status = FREE_CHAT
+                if self.rewards[self.level - 1] == 1:
+                    self.n_shurikens = min(3, self.n_shurikens + 1)
+                if self.rewards[self.level - 1] == 2:
+                    self.hp = min(5, self.hp + 1)
 
     # returns the current game state as dict object
     # this object must be returned by every public function

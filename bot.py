@@ -67,23 +67,24 @@ def next_level(status, message):
 def game_status(status, message):
     text = '''Жизни: {}
 Сюрикены: {}
-Карт в руке:
     '''.format(status['hp'], status['n_shurikens'])
-    for player, hand in status['player_hands'].items():
-        text += '''{}: {}
-        '''.format(players[player].first_name, len(hand))
+    if sum(map(sum, status['player_hands'].values())) != 0:
+        text += '''Карт в руке:
+        '''
+        for player, hand in status['player_hands'].items():
+            text += '''{}: {}
+            '''.format(players[player].first_name, len(hand))
     bot.send_message(message.chat.id, text)
 
 
 def check_status(status, message):
+    game_status(status, message)
     if status['status'] == WIN:
         win(message)
     elif status['status'] == LOSE:
         lose(message)
     elif status['status'] == FREE_CHAT:
         next_level(status, message)
-    else:
-        game_status(status, message)
 
 
 def drop_cards(status, message):
