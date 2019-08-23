@@ -32,22 +32,22 @@ def throw_warning(text):
 
 class Game:
     # initialized on init
-    game_id = None
     # initialized on start
-    n_levels = None
-    hp = None
     # initialized on compilation
-    n_players = 0
-    player_hands = dict()
-    player_status = dict()
-    level = 0
-    status = 0
     rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
-    n_shurikens = 1
-    top_card = 0
+
 
     def __init__(self, game_id):
         self.game_id = game_id
+        self.n_levels = None
+        self.hp = None
+        self.n_players = 0
+        self.player_hands = dict()
+        self.player_status = dict()
+        self.level = 0
+        self.status = 0
+        self.n_shurikens = 1
+        self.top_card = 0
 
     # add a player to the unstarted game session
     def add_player(self, player_id):
