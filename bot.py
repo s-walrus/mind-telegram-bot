@@ -106,7 +106,7 @@ def player_status(status, message):
 
 
 def start_level(message):
-    status = games[message.chat.id].start_level()
+    status = games[message.chat.id].start_level(message.from_user.id)
     if status['response'] == LEVEL_STARTED:
         bot.send_message(message.chat.id,
                          "Концентрация. Поднимите руки со стола, когда будете "
@@ -165,7 +165,7 @@ def add_player(message):
 @bot.message_handler(regexp=r'^Начать игру$')
 def start_game(message):
     chat_id = message.chat.id
-    status = games[chat_id].start_game()
+    status = games[chat_id].start_game(message.from_user.id)
     if len(status['player_hands']) < 2:
         bot.send_message(chat_id, 'Недостаточно игроков',
                          reply_markup=keyboards.begin_keyboard(),
