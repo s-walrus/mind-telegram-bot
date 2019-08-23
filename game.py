@@ -67,9 +67,9 @@ class Game:
                           'This player will not take part in this game.')
         return self.__get_status(response)
 
-    def start_game(self):
+    def start_game(self, player_id):
         response = GAME_STARTED
-        if self.status == NOT_STARTED:
+        if self.status == NOT_STARTED and player_id in self.player_hands.keys():
             if self.n_players == 2:
                 self.n_levels = 12
                 self.hp = 2
@@ -93,9 +93,9 @@ class Game:
         return self.__get_status(response)
 
     # proceed to the next level
-    def start_level(self):
+    def start_level(self, player_id):
         response = LEVEL_STARTED
-        if self.status == FREE_CHAT:
+        if self.status == FREE_CHAT and player_id in self.player_hands.keys():
             self.level += 1
             self.status = ACTION
             self.__pass_cards(self.level)
@@ -114,7 +114,8 @@ class Game:
         response = CARD_PLAYED
         discarded = {player_id: list() for player_id in
                      self.player_status.keys()}
-        if self.status == ACTION and self.player_hands[player_id]:
+        if self.status == ACTION and player_id in self.player_hands.keys() and \
+                self.player_hands[player_id]:
             card = min(self.player_hands[player_id])
             self.player_hands[player_id].remove(card)
             self.top_card = card
@@ -143,7 +144,8 @@ class Game:
 
     def place_hand(self, player_id):
         response = HAND_PLACED
-        if self.status in [CONCENTRATION, ACTION]:
+        if self.status in [CONCENTRATION,
+                           ACTION] and player_id in self.player_hands.keys():
             self.player_status[player_id] = STOP
             if self.status != CONCENTRATION:
                 response = CONCENTRATION_BEGINS
@@ -158,12 +160,14 @@ class Game:
     # called when unvoting for shuriken or being ready to end concentration
     def release_hand(self, player_id):
         response = HAND_RELEASED
-        if self.player_status[player_id] == STOP:
+        if player_id in self.player_hands.keys() and self.player_status[
+            player_id] == STOP:
             self.player_status[player_id] = NORMAL
             if STOP not in self.player_status.values():
                 self.status = ACTION
                 response = CONCENTRATION_ENDS
-        elif self.player_status[player_id] == SHURIKEN:
+        elif player_id in self.player_hands.keys() and self.player_status[
+            player_id] == SHURIKEN:
             self.player_status[player_id] = NORMAL
         else:
             response = WARNING
@@ -175,7 +179,7 @@ class Game:
         response = VOTED_FOR_SHURIKEN
         discarded = {player_id: list() for player_id in
                      self.player_status.keys()}
-        if self.status == ACTION and \
+        if player_id in self.player_hands.keys() and self.status == ACTION and \
                 self.n_shurikens > 0:
             self.player_status[player_id] = SHURIKEN
             if list(self.player_status.values()).count(SHURIKEN) == \
