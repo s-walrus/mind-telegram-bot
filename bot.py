@@ -1,5 +1,3 @@
-import time
-
 import telebot
 
 import game
@@ -88,6 +86,13 @@ def check_status(status, message):
         game_status(status, message)
 
 
+def drop_cards(status, message):
+    ll = status['discarded'].values()
+    cards = list(map(str, sorted([el for lst in ll for el in lst])))
+    cards = 'Сброшенные карты: ' + ', '.join(cards)
+    bot.send_message(message.chat.id, cards,
+                     reply_markup=keyboards.game_keyboard())
+
 def player_status(status, message):
     for player_id, hand in status['player_hands'].items():
         text = 'Твоя рука:\n' + ' '.join([str(item) for item in hand])
@@ -103,8 +108,8 @@ def start_level(message):
     status = games[message.chat.id].start_level()
     if status['response'] == LEVEL_STARTED:
         bot.send_message(message.chat.id,
-                     "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
-                     reply_markup=keyboards.concentration_keyboard())
+                         "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
+                         reply_markup=keyboards.concentration_keyboard())
         player_status(status, message)
     else:
         bot.send_message(message.chat.id,
@@ -119,16 +124,21 @@ def start(message):
         games[message.chat.id]
         pass
     except KeyError:
-        print('Checking', message.chat.id, message.from_user)
-        bot.send_message(message.chat.id,
-                         'Привет, начинаем новую игру!\nНачни диалог со мной '
-                         '(t.me/the_mind_bot), а затем нажми кнопку '
-                         '"Участвую"',
-                         reply_markup=keyboards.begin_keyboard())
-        new_game = game.Game(message.chat.id)
-        games[message.chat.id] = new_game
-        print(message.from_user.id)
-        print(message.chat.id)
+        if message.chat.id == message.from_user:
+            bot.send_message(message.chat.id,
+                             'Отлично, теперь я могу писать тебе сообщения! '
+                             'Сюда ты будешь получать информацию о своих '
+                             'картах.\nСоздай беседу с друзьями и добавь меня '
+                             'туда, чтобы поиграть!')
+        else:
+            bot.send_message(message.chat.id,
+                             'Привет, начинаем новую игру!'
+                             '\nНачни диалог со мной '
+                             '(t.me/the_mind_bot), а затем нажми кнопку '
+                             '"Участвую"',
+                             reply_markup=keyboards.begin_keyboard())
+            new_game = game.Game(message.chat.id)
+            games[message.chat.id] = new_game
 
 
 @bot.message_handler(regexp=r'^Участвую$')
@@ -183,15 +193,9 @@ def act(message):
         bot.send_message(message.chat.id, 'Сыгранная карта: ' + card_played,
                          reply_markup=keyboards.game_keyboard(),
                          reply_to_message_id=message.message_id)
-        print(sum(map(sum, status['discarded'].values())))
         if sum(map(sum, status['discarded'].values())) != 0:
             bot.send_message(message.chat.id, "Упс, ошибочка вышла :(")
-            ll = status['discarded'].values()
-            cards = [str(el) for lst in ll for el in lst]
-            cards = 'Сброшенные карты: ' + ', '.join(cards)
-
-            bot.send_message(message.chat.id, cards,
-                             reply_markup=keyboards.game_keyboard())
+            drop_cards(status, message)
 
     check_status(status, message)
 
@@ -218,11 +222,7 @@ def shuriken(message):
     status = games[message.chat.id].vote_shuriken(message.from_user.id)
     if status['response'] == SHURIKEN_THROWN:
         bot.send_message(message.chat.id, "Используем сюрикен!")
-        ll = status['discarded'].values()
-        cards = [str(el) for lst in ll for el in lst]
-        cards = 'Сброшенные карты: ' + ', '.join(cards)
-        bot.send_message(message.chat.id, cards,
-                         reply_markup=keyboards.game_keyboard())
+        drop_cards(status, message)
         player_status(status, message)
         check_status(status, message)
 
