@@ -46,3 +46,10 @@ def concentration_keyboard():
 def empty_keyboard():
     keyboard = types.ReplyKeyboardRemove()
     return keyboard
+
+
+def start_level_keyboard():
+    keyboard = types.ReplyKeyboardMarkup()
+    btn_start_level = types.KeyboardButton()
+    keyboard.row(btn_start_level)
+    return keyboard

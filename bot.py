@@ -61,7 +61,7 @@ def next_level(status, message):
 Чтобы перейти к следующему уровню, нажмите "Начать уровень".
     '''.format(status['level'], prizes[rewards[status['level'] - 1]])
     bot.send_message(message.chat.id, message_text,
-                     reply_markup=keyboards.empty_keyboard())
+                     reply_markup=keyboards.start_level_keyboard())
 
 
 def game_status(status, message):
@@ -93,6 +93,7 @@ def drop_cards(status, message):
     bot.send_message(message.chat.id, cards,
                      reply_markup=keyboards.game_keyboard())
 
+
 def player_status(status, message):
     for player_id, hand in status['player_hands'].items():
         text = 'Твоя рука:\n' + ' '.join([str(item) for item in hand])
@@ -108,7 +109,8 @@ def start_level(message):
     status = games[message.chat.id].start_level()
     if status['response'] == LEVEL_STARTED:
         bot.send_message(message.chat.id,
-                         "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
+                         "Концентрация. Поднимите руки со стола, когда будете "
+                         "готовы начинать.",
                          reply_markup=keyboards.concentration_keyboard())
         player_status(status, message)
     else:
@@ -146,7 +148,8 @@ def add_player(message):
     status = games[message.chat.id].add_player(message.from_user.id)
     if status['response'] == WARNING:
         bot.send_message(message.chat.id,
-                         'Ты уже участвуешь или максимальное количество игроков достигнуто',
+                         'Ты уже участвуешь или максимальное количество '
+                         'игроков достигнуто',
                          reply_markup=keyboards.begin_keyboard(),
                          reply_to_message_id=message.message_id)
 
