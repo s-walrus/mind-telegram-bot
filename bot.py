@@ -10,6 +10,7 @@ bot = telebot.TeleBot('955239993:AAGlEQaAkp8o3YSrz4pZ7hptKOBf-SI7XK0')
 #                            'http': 'socks5h://109.236.81.228:54321'}
 
 games = {}
+players = {}
 
 print('started')
 
@@ -59,21 +60,32 @@ def next_level(status, message):
     prizes = {1: "Сюрикен", 2: "Дополнительная жизнь", 0: "Ничего"}
     message_text = '''Уровень {} завершён!
 Ваша награда: {}
-Переходим к следующему уровню.
+Чтобы перейти к следующему уровню, нажмите "Начать уровень".
     '''.format(status['level'], prizes[rewards[status['level'] - 1]])
     bot.send_message(message.chat.id, message_text,
                      reply_markup=keyboards.empty_keyboard())
-    time.sleep(3)
-    start_level(message)
+
+
+def game_status(status, message):
+    text = '''Жизни: {}
+Сюрикены: {}
+Карт в руке:
+    '''.format(status['hp'], status['n_shurikens'])
+    for player, hand in status['player_hands'].items():
+        text += '''{}: {}
+        '''.format(players[player].first_name, len(hand))
+    bot.send_message(message.chat.id, text)
 
 
 def check_status(status, message):
     if status['status'] == WIN:
         win(message)
-    if status['status'] == LOSE:
+    elif status['status'] == LOSE:
         lose(message)
-    if status['status'] == FREE_CHAT:
+    elif status['status'] == FREE_CHAT:
         next_level(status, message)
+    else:
+        game_status(status, message)
 
 
 def player_status(status, message):
@@ -107,6 +119,7 @@ def start(message):
         games[message.chat.id]
         pass
     except KeyError:
+        print('Checking', message.chat.id, message.from_user)
         bot.send_message(message.chat.id,
                          'Привет, начинаем новую игру!\nНачни диалог со мной '
                          '(t.me/the_mind_bot), а затем нажми кнопку '
@@ -131,6 +144,7 @@ def add_player(message):
         bot.send_message(message.chat.id, 'Ты в игре!',
                          reply_markup=keyboards.begin_keyboard(),
                          reply_to_message_id=message.message_id)
+        players[message.from_user.id] = message.from_user
     bot.send_message(message.chat.id, 'Количество игроков - {}'.format(
         len(status['player_hands'])), reply_markup=keyboards.begin_keyboard())
 
@@ -145,6 +159,11 @@ def start_game(message):
                          reply_to_message_id=message.message_id)
         return
     bot.send_message(chat_id, 'Погнали!')
+    start_level(message)
+
+
+@bot.message_handler(regexp=r'^Начать уровень$')
+def start_next_level(message):
     start_level(message)
 
 
