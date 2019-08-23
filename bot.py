@@ -65,15 +65,14 @@ def next_level(status, message):
 
 
 def game_status(status, message):
-    text = '''Жизни: {}
-Сюрикены: {}
-    '''.format(status['hp'], status['n_shurikens'])
+    text = f'''Жизни: {status['hp']}
+Сюрикены: {status['n_shurikens']}
+'''
     if sum(map(sum, status['player_hands'].values())) != 0:
-        text += '''Карт в руке:
-        '''
+        text += 'Карт в руке:\n'
         for player, hand in status['player_hands'].items():
-            text += '''{}: {}
-            '''.format(players[player].first_name, len(hand))
+            text += f'''{players[player].first_name}: {len(hand)}
+'''
     bot.send_message(message.chat.id, text)
 
 
