@@ -34,7 +34,7 @@ class Game:
     # initialized on init
     # initialized on start
     # initialized on compilation
-    rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
+    rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 0, 0]
 
 
     def __init__(self, game_id):

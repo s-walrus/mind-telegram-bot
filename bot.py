@@ -54,7 +54,7 @@ def lose(message):
 
 
 def next_level(status, message):
-    rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1]
+    rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 0, 0]
     prizes = {2: "Сюрикен", 1: "Дополнительная жизнь", 0: "Ничего"}
     message_text = '''Уровень {} завершён!
 Ваша награда: {}
