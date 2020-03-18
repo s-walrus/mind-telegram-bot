@@ -1,5 +1,5 @@
 #!/bin/bash
 
 while true; do
-	python3 bot.py
+	python bot.py
 done
