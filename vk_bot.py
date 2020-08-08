@@ -15,8 +15,9 @@ $ gunicorn callback_bot:app
 
 print("Running...")
 
+token = 'ca3d7fe57dcd94094f8124926c073cc6d899ed9a39b04d28fe986882d27fc3fa63ad2995fe6099b501871'
 app = Flask(__name__)
-vk_session = vk_api.VkApi(token='your_group_token')
+vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 
 confirmation_code = '4ba58102'
@@ -31,7 +32,6 @@ $ python3 -c "import secrets;print(secrets.token_hex(16))"
 """
 @app.route('/a98ee537ec28acd9a86b9c8465c84fb1/', methods=['POST'])
 def bot():
-    print('Got POST request')
     # получаем данные из запроса
     data = request.get_json(force=True, silent=True)
     print(data)
