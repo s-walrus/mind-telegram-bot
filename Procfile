@@ -1,1 +1,1 @@
-web: python3 vk_bot.py
+web: gunicorn vk_bot:app
