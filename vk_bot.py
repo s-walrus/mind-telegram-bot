@@ -29,8 +29,9 @@ confirmation_code = '4ba58102'
 Сгенерировать строку можно через:
 $ python3 -c "import secrets;print(secrets.token_hex(16))"
 """
-@app.route('/a98ee537ec28acd9a86b9c8465c84fb1', methods=['POST'])
+@app.route('/a98ee537ec28acd9a86b9c8465c84fb1/', methods=['POST'])
 def bot():
+    print('Got POST request')
     # получаем данные из запроса
     data = request.get_json(force=True, silent=True)
     print(data)
