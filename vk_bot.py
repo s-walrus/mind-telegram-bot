@@ -13,6 +13,8 @@ $ FLASK_APP=callback_bot.py flask run
 $ gunicorn callback_bot:app
 """
 
+print("Running...")
+
 app = Flask(__name__)
 vk_session = vk_api.VkApi(token='your_group_token')
 vk = vk_session.get_api()
