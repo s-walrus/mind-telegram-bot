@@ -20,7 +20,7 @@ app = Flask(__name__)
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 
-confirmation_code = '4ba58102'
+confirmation_code = '32c019f9'
 
 """
 При развертывании путь к боту должен быть секретный,
