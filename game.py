@@ -67,9 +67,9 @@ class Game:
                           'This player will not take part in this game.')
         return self.__get_status(response)
 
-    def start_game(self, player_id):
+    def start_game(self):
         response = GAME_STARTED
-        if self.status == NOT_STARTED and player_id in self.player_hands.keys():
+        if self.status == NOT_STARTED:
             if self.n_players == 2:
                 self.n_levels = 12
                 self.hp = 2
@@ -93,9 +93,9 @@ class Game:
         return self.__get_status(response)
 
     # proceed to the next level
-    def start_level(self, player_id):
+    def start_level(self):
         response = LEVEL_STARTED
-        if self.status == FREE_CHAT and player_id in self.player_hands.keys():
+        if self.status == FREE_CHAT:
             self.level += 1
             self.status = ACTION
             self.__pass_cards(self.level)
