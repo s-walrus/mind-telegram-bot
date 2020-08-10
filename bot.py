@@ -144,6 +144,10 @@ def start(message):
 
 @bot.message_handler(regexp=r'^Участвую$')
 def add_player(message):
+    try:
+        games[message.chat.id]
+    except:
+        return
     status = games[message.chat.id].add_player(message.from_user.id)
     if status['response'] == WARNING:
         bot.send_message(message.chat.id,
