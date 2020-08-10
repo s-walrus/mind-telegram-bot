@@ -1,6 +1,7 @@
 from flask import Flask, request
 import vk_api
 from vk_api.utils import get_random_id
+from interface import GameInterface
 
 """
 Пример бота для группы ВКонтакте использующего
@@ -22,6 +23,57 @@ vk = vk_session.get_api()
 
 confirmation_code = '32c019f9'
 
+
+def send_message(chat_id, text, keyboard=None):
+    vk.messages.send(
+        message=text,
+        random_id=get_random_id(),
+        peer_id=chat_id
+    )
+
+
+def send_dms(dms):
+    for target in dms.keys():
+        send_message(target, dms[target])
+
+
+Game = GameInterface(send_message, send_dms)
+
+
+def handle_event(event: dict):
+    # debug output
+    print(event)
+
+    if event['type'] == 'message_new':
+        user_id = event['object']['from_id']
+        text = event['object']['text']
+        text = text.lower()
+        if 'chat_id' in event['object'].keys():
+            chat_id = event['object']['chat_id']
+            if 'start' in text:
+                Game.init_dialogue(chat_id)
+            elif 'участвую' in text:
+                Game.add_player(chat_id, user_id)
+            elif 'начать' in text:
+                Game.start_game(chat_id)
+            elif 'закончить' in text:
+                Game.end_game(chat_id)
+            elif 'ход' in text:
+                Game.act(chat_id, user_id)
+            elif 'стоп' in text:
+                Game.stop(chat_id, user_id)
+            elif 'отпустить' in text:
+                Game.player_concentration(chat_id, user_id)
+            elif 'отменить' in text:
+                Game.cancel(chat_id, user_id)
+            elif 'сюрикен' in text:
+                Game.shuriken(chat_id, user_id)
+        else:
+            pass
+    elif event['type'] == 'message_allow':
+        Game.init_user(event['object']['from_id'])
+
+
 """
 При развертывании путь к боту должен быть секретный,
 поэтому поменяйте my_bot на случайную строку
@@ -39,25 +91,11 @@ def bot():
     if not data or 'type' not in data:
         return 'not ok'
 
-    # проверяем тип пришедшего события
     if data['type'] == 'confirmation':
-        # если это запрос защитного кода
-        # отправляем его
         return confirmation_code
-    # если же это сообщение, отвечаем пользователю
-    elif data['type'] == 'message_new':
-        # получаем ID пользователя
-        from_id = data['object']['from_id']
-        # отправляем сообщение
-        vk.messages.send(
-            message='Hello World!',
-            random_id=get_random_id(),
-            peer_id=from_id
-        )
-        # возвращаем серверу VK "ok" и код 200
+    else:
+        handle_event(data)
         return 'ok'
-
-    return 'ok'  # игнорируем другие типы
 
 
 @app.route('/')

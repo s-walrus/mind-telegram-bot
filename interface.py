@@ -215,5 +215,4 @@ class GameInterface:
 
     # Отменить сюрикен
     def cancel(self, game_id, user_id):
-        # TODO Что это?
         self.games[game_id].release_hand(user_id)
