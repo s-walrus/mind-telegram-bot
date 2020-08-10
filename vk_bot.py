@@ -21,7 +21,7 @@ app = Flask(__name__)
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 
-confirmation_code = '32c019f9'
+confirmation_code = '42b8c745'
 
 
 def send_message(chat_id, text, keyboard=None):
