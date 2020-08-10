@@ -137,7 +137,7 @@ class GameInterface:
         if not silent:
             self.send_message(game_id,
                               "Речь мне не написали, но играть со мной уже можно",
-                              keyboard=empty_keyboard())
+                              keyboard=begin_keyboard())
 
     # Участвую
     def add_player(self, game_id, user_id):
