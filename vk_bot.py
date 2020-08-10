@@ -25,7 +25,7 @@ vk = vk_session.get_api()
 confirmation_code = '42b8c745'
 
 
-def send_message(chat_id, text, keyboard):
+def send_message(chat_id, text, keyboard=keyboards_vk.empty_keyboard()):
     vk.messages.send(
         message=text,
         random_id=get_random_id(),
