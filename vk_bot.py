@@ -45,11 +45,11 @@ def handle_event(event: dict):
     print(event)
 
     if event['type'] == 'message_new':
-        user_id = event['object']['from_id']
-        text = event['object']['text']
+        user_id = event['object']['message']['from_id']
+        text = event['object']['message']['text']
         text = text.lower()
-        if 'chat_id' in event['object'].keys():
-            chat_id = event['object']['chat_id']
+        if event['object']['message']['peer_id'] >= 2000000000:
+            chat_id = event['object']['message']['peer_id']
             if 'start' in text:
                 Game.init_dialogue(chat_id)
             elif 'участвую' in text:
@@ -71,7 +71,7 @@ def handle_event(event: dict):
         else:
             pass
     elif event['type'] == 'message_allow':
-        Game.init_user(event['object']['from_id'])
+        Game.init_user(event['object']['message']['from_id'])
 
 
 """
