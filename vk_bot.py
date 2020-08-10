@@ -2,6 +2,7 @@ from flask import Flask, request
 import vk_api
 from vk_api.utils import get_random_id
 from interface import GameInterface
+import keyboards_vk
 
 """
 Пример бота для группы ВКонтакте использующего
@@ -24,11 +25,12 @@ vk = vk_session.get_api()
 confirmation_code = '42b8c745'
 
 
-def send_message(chat_id, text, keyboard=None):
+def send_message(chat_id, text, keyboard):
     vk.messages.send(
         message=text,
         random_id=get_random_id(),
-        peer_id=chat_id
+        peer_id=chat_id,
+        keyboard=keyboard
     )
 
 
