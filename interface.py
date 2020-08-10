@@ -112,7 +112,7 @@ class GameInterface:
         if status['response'] == LEVEL_STARTED:
             self.send_message(game_id,
                               "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
-                              keyboard='concentration')
+                              keyboard=concentration_keyboard())
             self.dm_player_hands(status, game_id)
         else:
             print('WARNING')
