@@ -12,6 +12,7 @@ def game_keyboard():
     keyboard = VkKeyboard()
     keyboard.add_button('Ход', 'positive')
     keyboard.add_button('СТОП!', 'negative')
+    keyboard.add_line()
     keyboard.add_button('Сюрикен', 'primary')
     keyboard.add_button('Отменить сюрикен', 'default')
     return keyboard.get_keyboard()

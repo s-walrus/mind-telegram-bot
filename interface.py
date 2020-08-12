@@ -51,14 +51,14 @@ class GameInterface:
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Ура, вы победили!',
-                          empty_keyboard())
+                          begin_keyboard())
 
     def lose(self, game_id):
         """Finish game and indicate defeat"""
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Вы проиграли :(',
-                          empty_keyboard())
+                          begin_keyboard())
 
     def offer_next_level(self, status, game_id):
         """Offer players to proceed to next level"""
