@@ -1,4 +1,5 @@
 from game import Game
+from keyboards_vk import *
 
 
 # game phases
@@ -50,14 +51,14 @@ class GameInterface:
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Ура, вы победили!',
-                          'no_game')
+                          begin_keyboard())
 
     def lose(self, game_id):
         """Finish game and indicate defeat"""
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Вы проиграли :(',
-                          'no_game')
+                          begin_keyboard())
 
     def offer_next_level(self, status, game_id):
         """Offer players to proceed to next level"""
@@ -67,7 +68,7 @@ class GameInterface:
         self.send_message(game_id, f"Уровень {status['level']} завершён!")
         self.send_message(game_id, f"Ваша награда: {prizes[rewards[status['level'] - 1]]}")
         self.send_message(game_id, f"Чтобы перейти к следующему уровню, нажмите \"Начать уровень\".",
-                          keyboard="next_level_offer")
+                          keyboard=start_level_keyboard())
 
     def send_game_status(self, status, game_id):
         """Send information about HP and shurikens left"""
@@ -95,7 +96,7 @@ class GameInterface:
         cards = list(map(str, sorted([el for lst in ll for el in lst])))
         cards = 'Сброшенные карты: ' + ', '.join(cards)
         self.send_message(game_id, cards,
-                          keyboard='game')
+                          keyboard=game_keyboard())
 
     def dm_player_hands(self, status, game_id):
         """Tell players about cards of their hands"""
@@ -111,9 +112,8 @@ class GameInterface:
         if status['response'] == LEVEL_STARTED:
             self.send_message(game_id,
                               "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
-                              keyboard='concentration')
+                              keyboard=concentration_keyboard())
             self.dm_player_hands(status, game_id)
-            self.send_game_status(status, game_id)
         else:
             print('WARNING')
             print(status)
@@ -128,7 +128,7 @@ class GameInterface:
                           'Сюда ты будешь получать информацию о своих '
                           'картах.\nСоздай беседу с друзьями и добавь меня '
                           'туда, чтобы поиграть!',
-                          keyboard='user_help')
+                          keyboard=empty_keyboard())
 
     def init_dialogue(self, game_id, silent=False):
         """Prepare to run games in the dialogue; send a welcome message is not silent"""
@@ -137,7 +137,7 @@ class GameInterface:
         if not silent:
             self.send_message(game_id,
                               "Речь мне не написали, но играть со мной уже можно",
-                              keyboard='no_game')
+                              keyboard=begin_keyboard())
 
     # Участвую
     def add_player(self, game_id, user_id, user_name):
@@ -146,12 +146,12 @@ class GameInterface:
         if status['response'] == WARNING:
             self.send_message(game_id,
                               "Ты уже участвуешь или максимальное количество игроков достигнуто",
-                              keyboard='no_game')
+                              keyboard=begin_keyboard())
         else:
             self.player_names[user_id] = user_name
             self.send_message(game_id,
                               f"Ты в игре! Колическтво игроков: {len(status['player_hands'])}",
-                              keyboard='no_game')
+                              keyboard=begin_keyboard())
 
     # Начать игру
     def start_game(self, game_id):
@@ -160,9 +160,9 @@ class GameInterface:
         status = self.games[chat_id].start_game()
         if len(status['player_hands']) < 2:
             self.send_message(game_id, 'Для начала игры нужно хотя бы 2 игрока',
-                              keyboard='no_game')
+                              keyboard=begin_keyboard())
         else:
-            self.send_message(game_id, 'Начинаем!')
+            self.send_message(game_id, 'Начинаем!', keyboard=empty_keyboard())
             self.start_level(game_id)
 
     # Закончить игру
@@ -171,7 +171,7 @@ class GameInterface:
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Игра завершена. Чтобы начать новую игру, нажмите [какую-то кнопку]',
-                          keyboard='no_game')
+                          keyboard=empty_keyboard())
 
     # Ход
     def act(self, game_id, user_id):
@@ -181,12 +181,11 @@ class GameInterface:
             card_played = str(status['top_card'])
             self.send_message(game_id,
                               'Сыгранная карта: ' + card_played,
-                              keyboard='in-game')
+                              keyboard=game_keyboard())
             self.dm_player_hands(status, game_id)
             if sum(map(sum, status['discarded'].values())) != 0:
                 self.send_message(game_id, "Упс, ошибочка вышла :(")
                 self.print_droppile(status, game_id)
-                self.send_game_status(status, game_id)
 
         self.check_status(status, game_id)
 
@@ -194,7 +193,7 @@ class GameInterface:
     def stop(self, game_id, user_id):
         self.send_message(game_id,
                           'СТОП! Если хотите продолжить - все должны отпустить руки',
-                          keyboard='place_hand')
+                          keyboard=concentration_keyboard())
         status = self.games[game_id].place_hand(user_id)
         self.send_game_status(status, game_id)
 
@@ -203,7 +202,7 @@ class GameInterface:
         status = self.games[game_id].release_hand(user_id)
         if status['response'] == CONCENTRATION_ENDS:
             self.send_message(game_id, "Можно играть!",
-                              keyboard='in-game')
+                              keyboard=game_keyboard())
             self.dm_player_hands(status, game_id)
 
     # Сюрикен
@@ -214,7 +213,6 @@ class GameInterface:
             self.send_message(game_id, "Сюрикен!")
             self.print_droppile(status, game_id)
             self.dm_player_hands(status, game_id)
-            self.send_game_status(status, game_id)
             self.check_status(status, game_id)
 
     # Отменить сюрикен
