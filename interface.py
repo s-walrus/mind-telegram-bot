@@ -207,10 +207,12 @@ class GameInterface:
 
     # Сюрикен
     def shuriken(self, game_id, user_id):
-        # TODO Отправить сообщение о голосовании за сюрикен со статусом голосования
         status = self.games[game_id].vote_shuriken(user_id)
+        self.send_message(game_id,
+                          f"{self.player_names[user_id]} голосует за сюрикен "
+                          f"({status['player_status'].count(SHURIKEN)}/{len(status['player_status'])})")
         if status['response'] == SHURIKEN_THROWN:
-            self.send_message(game_id, "Сюрикен!")
+            self.send_message(game_id, "Сюрикен брошен!")
             self.print_droppile(status, game_id)
             self.dm_player_hands(status, game_id)
             self.check_status(status, game_id)
