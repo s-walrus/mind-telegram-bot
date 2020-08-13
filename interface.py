@@ -39,7 +39,7 @@ class GameInterface:
     """
 
     games = {}
-    players = {}
+    player_names = {}
 
     def __init__(self, send_message_function: callable, send_dms_function: callable):
         self.send_message = send_message_function
@@ -76,7 +76,7 @@ class GameInterface:
         if sum(map(sum, status['player_hands'].values())) != 0:
             text += '\n\nКарт в руке:'
             for player, hand in status['player_hands'].items():
-                text += f"\n{self.players[player].first_name}: {len(hand)}"
+                text += f"\n{self.player_names[player]}: {len(hand)}"
         self.send_message(game_id, text)
 
     def check_status(self, status, game_id):
@@ -113,6 +113,7 @@ class GameInterface:
                               "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
                               keyboard='concentration')
             self.dm_player_hands(status, game_id)
+            self.send_game_status(status, game_id)
         else:
             print('WARNING')
             print(status)
@@ -139,7 +140,7 @@ class GameInterface:
                               keyboard='no_game')
 
     # Участвую
-    def add_player(self, game_id, user_id):
+    def add_player(self, game_id, user_id, user_name):
         """Add player to a not started game"""
         status = self.games[game_id].add_player(user_id)
         if status['response'] == WARNING:
@@ -147,7 +148,7 @@ class GameInterface:
                               "Ты уже участвуешь или максимальное количество игроков достигнуто",
                               keyboard='no_game')
         else:
-            self.players[user_id] = 1  # было: ... = user | Что это? Зачем хранить пользователя? todo
+            self.player_names[user_id] = user_name
             self.send_message(game_id,
                               f"Ты в игре! Колическтво игроков: {len(status['player_hands'])}",
                               keyboard='no_game')
@@ -185,6 +186,7 @@ class GameInterface:
             if sum(map(sum, status['discarded'].values())) != 0:
                 self.send_message(game_id, "Упс, ошибочка вышла :(")
                 self.print_droppile(status, game_id)
+                self.send_game_status(status, game_id)
 
         self.check_status(status, game_id)
 
@@ -193,7 +195,8 @@ class GameInterface:
         self.send_message(game_id,
                           'СТОП! Если хотите продолжить - все должны отпустить руки',
                           keyboard='place_hand')
-        self.games[game_id].place_hand(user_id)
+        status = self.games[game_id].place_hand(user_id)
+        self.send_game_status(status, game_id)
 
     # Отпустить руку
     def player_concentration(self, game_id, user_id):
@@ -211,6 +214,7 @@ class GameInterface:
             self.send_message(game_id, "Сюрикен!")
             self.print_droppile(status, game_id)
             self.dm_player_hands(status, game_id)
+            self.send_game_status(status, game_id)
             self.check_status(status, game_id)
 
     # Отменить сюрикен

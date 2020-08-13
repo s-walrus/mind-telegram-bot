@@ -41,11 +41,9 @@ Game = GameInterface(send_message, send_dms)
 
 
 def handle_event(event: dict):
-    # debug output
-    print(event)
-
     if event['type'] == 'message_new':
         user_id = event['object']['message']['from_id']
+        user_name = vk.users.get(user_id, '', '')[0]['first_name']
         text = event['object']['message']['text']
         text = text.lower()
         if event['object']['message']['peer_id'] >= 2000000000:
@@ -86,7 +84,6 @@ $ python3 -c "import secrets;print(secrets.token_hex(16))"
 def bot():
     # получаем данные из запроса
     data = request.get_json(force=True, silent=True)
-    print(data)
     # ВКонтакте в своих запросах всегда отправляет поле type:
     if not data or 'type' not in data:
         return 'not ok'
