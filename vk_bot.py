@@ -45,7 +45,7 @@ Game = GameInterface(send_message, send_dms)
 def handle_event(event: dict):
     if event['type'] == 'message_new':
         user_id = event['object']['message']['from_id']
-        user_name = vk.users.get(user_id, '', '')[0]['first_name']
+        user_name = vk.users.get(user_ids=user_id)[0]['first_name']
         text = event['object']['message']['text']
         text = text.lower()
         if event['object']['message']['peer_id'] >= 2000000000:
@@ -53,7 +53,7 @@ def handle_event(event: dict):
             if 'start' in text:
                 Game.init_dialogue(chat_id)
             elif 'участвую' in text:
-                Game.add_player(chat_id, user_id)
+                Game.add_player(chat_id, user_id, user_name)
             elif 'начать' in text:
                 Game.start_game(chat_id)
             elif 'закончить' in text:
