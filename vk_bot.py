@@ -3,6 +3,7 @@ import vk_api
 from vk_api.utils import get_random_id
 from interface import GameInterface
 import keyboards_vk
+from keyboards_vk import *
 
 """
 Пример бота для группы ВКонтакте использующего
@@ -25,7 +26,22 @@ vk = vk_session.get_api()
 confirmation_code = '42b8c745'
 
 
-def send_message(chat_id, text, keyboard=keyboards_vk.empty_keyboard()):
+def get_keyboard(name):
+    if name == 'no_game':
+        return begin_keyboard()
+    elif name == 'between_levels':
+        return start_level_keyboard()
+    elif name == 'in-game':
+        return game_keyboard()
+    elif name == 'concentration':
+        return concentration_keyboard()
+    elif name == 'empty':
+        return empty_keyboard()
+    else:
+        raise ValueError(f"Invalid keyboard name ({name})")
+
+
+def send_message(chat_id, text, keyboard='empty'):
     vk.messages.send(
         message=text,
         random_id=get_random_id(),

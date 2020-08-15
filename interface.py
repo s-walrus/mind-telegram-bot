@@ -1,5 +1,4 @@
 from game import Game
-from keyboards_vk import *
 
 
 # game phases
@@ -51,14 +50,14 @@ class GameInterface:
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Ура, вы победили!',
-                          begin_keyboard())
+                          'no_game')
 
     def lose(self, game_id):
         """Finish game and indicate defeat"""
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Вы проиграли :(',
-                          begin_keyboard())
+                          'no_game')
 
     def offer_next_level(self, status, game_id):
         """Offer players to proceed to next level"""
@@ -68,7 +67,7 @@ class GameInterface:
         self.send_message(game_id, f"Уровень {status['level']} завершён!")
         self.send_message(game_id, f"Ваша награда: {prizes[rewards[status['level'] - 1]]}")
         self.send_message(game_id, f"Чтобы перейти к следующему уровню, нажмите \"Начать уровень\".",
-                          keyboard=start_level_keyboard())
+                          keyboard='between_levels')
 
     def send_game_status(self, status, game_id):
         """Send information about HP and shurikens left"""
@@ -96,7 +95,7 @@ class GameInterface:
         cards = list(map(str, sorted([el for lst in ll for el in lst])))
         cards = 'Сброшенные карты: ' + ', '.join(cards)
         self.send_message(game_id, cards,
-                          keyboard=game_keyboard())
+                          keyboard='in-game')
 
     def dm_player_hands(self, status, game_id):
         """Tell players about cards of their hands"""
@@ -112,7 +111,7 @@ class GameInterface:
         if status['response'] == LEVEL_STARTED:
             self.send_message(game_id,
                               "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
-                              keyboard=concentration_keyboard())
+                              keyboard='concentration')
             self.dm_player_hands(status, game_id)
         else:
             print('WARNING')
@@ -127,8 +126,7 @@ class GameInterface:
                           'Отлично, я могу писать тебе сообщения! '
                           'Сюда ты будешь получать информацию о своих '
                           'картах.\nСоздай беседу с друзьями и добавь меня '
-                          'туда, чтобы поиграть!',
-                          keyboard=empty_keyboard())
+                          'туда, чтобы поиграть!')
 
     def init_dialogue(self, game_id, silent=False):
         """Prepare to run games in the dialogue; send a welcome message is not silent"""
@@ -137,7 +135,7 @@ class GameInterface:
         if not silent:
             self.send_message(game_id,
                               "Речь мне не написали, но играть со мной уже можно",
-                              keyboard=begin_keyboard())
+                              keyboard='no_game')
 
     # Участвую
     def add_player(self, game_id, user_id, user_name):
@@ -146,12 +144,12 @@ class GameInterface:
         if status['response'] == WARNING:
             self.send_message(game_id,
                               "Ты уже участвуешь или максимальное количество игроков достигнуто",
-                              keyboard=begin_keyboard())
+                              keyboard='no_game')
         else:
             self.player_names[user_id] = user_name
             self.send_message(game_id,
                               f"Ты в игре! Колическтво игроков: {len(status['player_hands'])}",
-                              keyboard=begin_keyboard())
+                              keyboard='no_game')
 
     # Начать игру
     def start_game(self, game_id):
@@ -160,9 +158,9 @@ class GameInterface:
         status = self.games[chat_id].start_game()
         if len(status['player_hands']) < 2:
             self.send_message(game_id, 'Для начала игры нужно хотя бы 2 игрока',
-                              keyboard=begin_keyboard())
+                              keyboard='no_game')
         else:
-            self.send_message(game_id, 'Начинаем!', keyboard=empty_keyboard())
+            self.send_message(game_id, 'Начинаем!')
             self.start_level(game_id)
 
     # Закончить игру
@@ -171,7 +169,7 @@ class GameInterface:
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Игра завершена. Чтобы начать новую игру, нажмите [какую-то кнопку]',
-                          keyboard=empty_keyboard())
+                          keyboard='no_game')
 
     # Ход
     def act(self, game_id, user_id):
@@ -181,7 +179,7 @@ class GameInterface:
             card_played = str(status['top_card'])
             self.send_message(game_id,
                               'Сыгранная карта: ' + card_played,
-                              keyboard=game_keyboard())
+                              keyboard='in-game')
             self.dm_player_hands(status, game_id)
             if sum(map(sum, status['discarded'].values())) != 0:
                 self.send_message(game_id, "Упс, ошибочка вышла :(")
@@ -193,7 +191,7 @@ class GameInterface:
     def stop(self, game_id, user_id):
         self.send_message(game_id,
                           'СТОП! Если хотите продолжить - все должны отпустить руки',
-                          keyboard=concentration_keyboard())
+                          keyboard='concentration')
         status = self.games[game_id].place_hand(user_id)
         self.send_game_status(status, game_id)
 
@@ -202,7 +200,7 @@ class GameInterface:
         status = self.games[game_id].release_hand(user_id)
         if status['response'] == CONCENTRATION_ENDS:
             self.send_message(game_id, "Можно играть!",
-                              keyboard=game_keyboard())
+                              keyboard='in-game')
             self.dm_player_hands(status, game_id)
 
     # Сюрикен
