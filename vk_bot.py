@@ -46,7 +46,7 @@ def send_message(chat_id, text, keyboard='empty'):
         message=text,
         random_id=get_random_id(),
         peer_id=chat_id,
-        keyboard=keyboard
+        keyboard=get_keyboard(keyboard)
     )
 
 
