@@ -75,10 +75,9 @@ class GameInterface:
         """Send information about HP and shurikens left"""
         text = f"Жизни: {status['hp']}\n" \
                f"Сюрикены: {status['n_shurikens']}"
-        if sum(map(sum, status['player_hands'].values())) != 0:
-            text += '\n\nКарт в руке:'
-            for player, hand in status['player_hands'].items():
-                text += f"\n{self.player_names[player]}: {len(hand)}"
+        text += '\n\nКарт в руке:'
+        for player, hand in status['player_hands'].items():
+            text += f"\n{self.player_names[player]}: {len(hand)}"
         self.send_message(game_id, text)
 
     def check_status(self, status, game_id):
@@ -192,11 +191,11 @@ class GameInterface:
 
     # Стоп!
     def stop(self, game_id, user_id):
+        self.send_game_status(status, game_id)
         self.send_message(game_id,
                           'СТОП! Если хотите продолжить - все должны отпустить руки',
                           keyboard='concentration')
         status = self.games[game_id].place_hand(user_id)
-        self.send_game_status(status, game_id)
 
     # Отпустить руку
     def player_concentration(self, game_id, user_id):
