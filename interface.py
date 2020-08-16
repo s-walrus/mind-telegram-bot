@@ -111,6 +111,7 @@ class GameInterface:
         """Start next level"""
         status = self.games[game_id].start_level()
         if status['response'] == LEVEL_STARTED:
+            self.send_game_status(status, game_id)
             self.send_message(game_id,
                               "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
                               keyboard='concentration')
