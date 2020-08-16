@@ -215,4 +215,9 @@ dmypy.json
 .pyre/
 .DS_Store
 
+# Private keys
+env_keys.py
+1.sh
+2.sh
+
 # End of https://www.gitignore.io/api/python,pycharm+all

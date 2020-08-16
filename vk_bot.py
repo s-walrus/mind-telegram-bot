@@ -1,8 +1,9 @@
-from flask import Flask, request
 import vk_api
+from flask import Flask, request
 from vk_api.utils import get_random_id
+
+from env_keys import VK_TOKEN, CODE, SECRET_ROOT
 from interface import GameInterface
-import keyboards_vk
 from keyboards_vk import *
 
 """
@@ -18,12 +19,12 @@ $ gunicorn callback_bot:app
 
 print("Running...")
 
-token = 'ca3d7fe57dcd94094f8124926c073cc6d899ed9a39b04d28fe986882d27fc3fa63ad2995fe6099b501871'
+token = VK_TOKEN
 app = Flask(__name__)
 vk_session = vk_api.VkApi(token=token)
 vk = vk_session.get_api()
 
-confirmation_code = '42b8c745'
+confirmation_code = CODE
 
 
 def get_keyboard(name):
@@ -98,7 +99,9 @@ def handle_event(event: dict):
 Сгенерировать строку можно через:
 $ python3 -c "import secrets;print(secrets.token_hex(16))"
 """
-@app.route('/a98ee537ec28acd9a86b9c8465c84fb1/', methods=['POST'])
+
+
+@app.route(SECRET_ROOT, methods=['POST'])
 def bot():
     # получаем данные из запроса
     data = request.get_json(force=True, silent=True)

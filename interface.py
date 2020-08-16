@@ -1,6 +1,5 @@
 from game import Game
 
-
 # game phases
 NOT_STARTED = 0
 FREE_CHAT = 1
@@ -41,7 +40,8 @@ class GameInterface:
     games = {}
     player_names = {}
 
-    def __init__(self, send_message_function: callable, send_dms_function: callable):
+    def __init__(self, send_message_function: callable,
+                 send_dms_function: callable):
         self.send_message = send_message_function
         self.send_dms = send_dms_function
 
@@ -65,8 +65,10 @@ class GameInterface:
         prizes = {2: "Сюрикен", 1: "Дополнительная жизнь", 0: "Ничего"}
 
         self.send_message(game_id, f"Уровень {status['level']} завершён!")
-        self.send_message(game_id, f"Ваша награда: {prizes[rewards[status['level'] - 1]]}")
-        self.send_message(game_id, f"Чтобы перейти к следующему уровню, нажмите \"Начать уровень\".",
+        self.send_message(game_id,
+                          f"Ваша награда: {prizes[rewards[status['level'] - 1]]}")
+        self.send_message(game_id,
+                          f"Чтобы перейти к следующему уровню, нажмите \"Начать уровень\".",
                           keyboard='between_levels')
 
     def send_game_status(self, status, game_id):
@@ -99,7 +101,7 @@ class GameInterface:
 
     def dm_player_hands(self, status, game_id):
         """Tell players about cards of their hands"""
-        dms = {}            # direct messages
+        dms = {}  # direct messages
         for player_id, hand in status['player_hands'].items():
             text = f"На руке: {' '.join(map(str, hand))}"
             dms[player_id] = text

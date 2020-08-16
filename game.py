@@ -36,7 +36,6 @@ class Game:
     # initialized on compilation
     rewards = [0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 0, 0]
 
-
     def __init__(self, game_id):
         self.game_id = game_id
         self.n_levels = None
