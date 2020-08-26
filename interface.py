@@ -41,7 +41,8 @@ class GameInterface:
     games = {}
     player_names = {}
 
-    def __init__(self, send_message_function: callable, send_dms_function: callable):
+    def __init__(self, send_message_function: callable,
+                 send_dms_function: callable):
         self.send_message = send_message_function
         self.send_dms = send_dms_function
 
@@ -70,18 +71,19 @@ class GameInterface:
         prizes = {2: "Сюрикен", 1: "Дополнительная жизнь", 0: "Ничего"}
 
         self.send_message(game_id, f"Уровень {status['level']} завершён!")
-        self.send_message(game_id, f"Ваша награда: {prizes[rewards[status['level'] - 1]]}")
-        self.send_message(game_id, f"Чтобы перейти к следующему уровню, нажмите \"Начать уровень\".",
+        self.send_message(game_id,
+                          f"Ваша награда: {prizes[rewards[status['level'] - 1]]}")
+        self.send_message(game_id,
+                          f"Чтобы перейти к следующему уровню, нажмите \"Начать уровень\".",
                           keyboard='between_levels')
 
     def send_game_status(self, status, game_id):
         """Send information about HP and shurikens left"""
         text = f"Жизни: {status['hp']}\n" \
                f"Сюрикены: {status['n_shurikens']}"
-        if sum(map(sum, status['player_hands'].values())) != 0:
-            text += '\n\nКарт в руке:'
-            for player, hand in status['player_hands'].items():
-                text += f"\n{self.player_names[player]}: {len(hand)}"
+        text += '\n\nКарт в руке:'
+        for player, hand in status['player_hands'].items():
+            text += f"\n{self.player_names[player]}: {len(hand)}"
         self.send_message(game_id, text)
 
     def check_status(self, status, game_id):
@@ -114,6 +116,7 @@ class GameInterface:
         """Start next level"""
         status = self.games[game_id].start_level()
         if status['response'] == LEVEL_STARTED:
+            self.send_game_status(status, game_id)
             self.send_message(game_id,
                               "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
                               keyboard='concentration')
@@ -199,11 +202,11 @@ class GameInterface:
     # Стоп!
     def stop(self, game_id, user_id):
         self.handle_uninitialized_game(game_id)
+        status = self.games[game_id].place_hand(user_id)
+        self.send_game_status(status, game_id)
         self.send_message(game_id,
                           'СТОП! Если хотите продолжить - все должны отпустить руки',
                           keyboard='concentration')
-        status = self.games[game_id].place_hand(user_id)
-        self.send_game_status(status, game_id)
 
     # Отпустить руку
     def player_concentration(self, game_id, user_id):
