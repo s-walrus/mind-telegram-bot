@@ -204,10 +204,15 @@ class GameInterface:
     def stop(self, game_id, user_id):
         self.handle_uninitialized_game(game_id)
         status = self.games[game_id].place_hand(user_id)
-        self.send_game_status(status, game_id)
-        self.send_message(game_id,
-                          'СТОП! Если хотите продолжить - все должны отпустить руки',
-                          keyboard='concentration')
+        if status['status'] == CONCENTRATION:
+            self.send_game_status(status, game_id)
+            self.send_message(game_id,
+                              'СТОП! Если хотите продолжить - все должны отпустить руки',
+                              keyboard='concentration')
+        else:
+            self.send_message(game_id,
+                              'Похоже, игра не началась',
+                              keyboard='last')
 
     # Отпустить руку
     def player_concentration(self, game_id, user_id):
@@ -224,11 +229,13 @@ class GameInterface:
         status = self.games[game_id].vote_shuriken(user_id)
         n_voted_players = list(status['player_status'].values()).count(SHURIKEN)
         n_players = len(status['player_status'])
-        self.send_message(game_id,
-                          f"{self.player_names[user_id]} голосует за сюрикен "
-                          f"({n_voted_players}/{n_players})")
-        if status['response'] == SHURIKEN_THROWN:
-            self.send_message(game_id, "Сюрикен брошен!")
+        if status['response'] == VOTED_FOR_SHURIKEN:
+            self.send_message(game_id,
+                              f"{self.player_names[user_id]} голосует за сюрикен "
+                              f"({n_voted_players}/{n_players})",
+                              keyboard='in-game')
+        elif status['response'] == SHURIKEN_THROWN:
+            self.send_message(game_id, "Сюрикен брошен!", keyboard='in-game')
             self.print_droppile(status, game_id)
             self.dm_player_hands(status, game_id)
             self.check_status(status, game_id)

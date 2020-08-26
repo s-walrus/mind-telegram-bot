@@ -142,10 +142,13 @@ class Game:
         return self.__get_status(response, discarded=discarded)
 
     def place_hand(self, player_id):
+        """Places down all players' hands (this behavior may be changed in future)"""
         response = HAND_PLACED
         if self.status in [CONCENTRATION,
                            ACTION] and player_id in self.player_hands.keys():
-            self.player_status[player_id] = STOP
+            for item in self.player_status:
+                self.player_status[item] = STOP
+            # self.player_status[player_id] = STOP
             if self.status != CONCENTRATION:
                 response = CONCENTRATION_BEGINS
             self.status = CONCENTRATION
