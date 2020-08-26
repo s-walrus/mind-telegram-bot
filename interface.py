@@ -204,10 +204,15 @@ class GameInterface:
     def stop(self, game_id, user_id):
         self.handle_uninitialized_game(game_id)
         status = self.games[game_id].place_hand(user_id)
-        self.send_game_status(status, game_id)
-        self.send_message(game_id,
-                          'СТОП! Если хотите продолжить - все должны отпустить руки',
-                          keyboard='concentration')
+        if status.status == CONCENTRATION:
+            self.send_game_status(status, game_id)
+            self.send_message(game_id,
+                              'СТОП! Если хотите продолжить - все должны отпустить руки',
+                              keyboard='concentration')
+        else:
+            self.send_message(game_id,
+                              'Похоже, игра не началась',
+                              keyboard='last')
 
     # Отпустить руку
     def player_concentration(self, game_id, user_id):
