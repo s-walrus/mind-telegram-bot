@@ -26,8 +26,15 @@ vk = vk_session.get_api()
 
 confirmation_code = CODE
 
+active_keyboard = {}
 
-def get_keyboard(name):
+
+def get_keyboard(name, game_id):
+    if name == 'last':
+        name = active_keyboard.get(game_id, 'empty')
+
+    active_keyboard[game_id] = name
+
     if name == 'no_game':
         return begin_keyboard()
     elif name == 'between_levels':
@@ -47,7 +54,7 @@ def send_message(chat_id, text, keyboard='empty'):
         message=text,
         random_id=get_random_id(),
         peer_id=chat_id,
-        keyboard=get_keyboard(keyboard)
+        keyboard=get_keyboard(keyboard, game_id=chat_id)
     )
 
 

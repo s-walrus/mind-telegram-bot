@@ -126,7 +126,8 @@ class GameInterface:
             print(status)
             self.send_message(game_id,
                               'Что-то пошло не так :(\n'
-                              'Если проблема повторяется, скорее всего, мы уже решаем её.')
+                              'Если проблема повторяется, скорее всего, мы уже решаем её.',
+                              keyboard='last')
 
     def init_user(self, user_id):
         """Send welcome message to user"""
@@ -170,7 +171,7 @@ class GameInterface:
             self.send_message(game_id, 'Для начала игры нужно хотя бы 2 игрока',
                               keyboard='no_game')
         else:
-            self.send_message(game_id, 'Начинаем!')
+            self.send_message(game_id, 'Начинаем!', keyboard='last')
             self.start_level(game_id)
 
     # Закончить игру
