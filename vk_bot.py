@@ -77,7 +77,7 @@ def handle_event(event: dict):
             if 'start' in text:
                 Game.init_dialogue(chat_id)
             elif 'участвую' in text:
-                if vk.messaages.isMessagesFromGroupAllowed(group_id=GROUP_ID,
+                if vk.messages.isMessagesFromGroupAllowed(group_id=GROUP_ID,
                                                            user_id=user_id)['is_allowed']:
                     Game.add_player(chat_id, user_id, user_name)
                 else:
