@@ -2,7 +2,7 @@ import vk_api
 from flask import Flask, request
 from vk_api.utils import get_random_id
 
-from env_keys import VK_TOKEN, CODE, SECRET_ROOT
+from env_keys import VK_TOKEN, CODE, SECRET_ROOT, GROUP_ID
 from interface import GameInterface
 from keyboards_vk import *
 
@@ -77,7 +77,16 @@ def handle_event(event: dict):
             if 'start' in text:
                 Game.init_dialogue(chat_id)
             elif 'участвую' in text:
-                Game.add_player(chat_id, user_id, user_name)
+                if vk.messaages.isMessagesFromGroupAllowed(group_id=GROUP_ID,
+                                                           user_id=user_id)['is_allowed']:
+                    Game.add_player(chat_id, user_id, user_name)
+                else:
+                    send_message(chat_id,
+                                 f'{user_name} не разрешил отправку сообщений '
+                                 f'от сообщества OpenMind. Для того, '
+                                 f'чтобы стать участником игры, необходимо '
+                                 f'разрешить сообщество отправлять сообщения.',
+                                 'no_game')
             elif 'начать' in text:
                 Game.start_game(chat_id)
             elif 'закончить' in text:
