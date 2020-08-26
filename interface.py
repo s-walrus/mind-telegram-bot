@@ -229,12 +229,12 @@ class GameInterface:
         status = self.games[game_id].vote_shuriken(user_id)
         n_voted_players = list(status['player_status'].values()).count(SHURIKEN)
         n_players = len(status['player_status'])
-        if status['response'] != SHURIKEN_THROWN:
+        if status['response'] == VOTED_FOR_SHURIKEN:
             self.send_message(game_id,
                               f"{self.player_names[user_id]} голосует за сюрикен "
                               f"({n_voted_players}/{n_players})",
                               keyboard='in-game')
-        else:
+        elif status['response'] == SHURIKEN_THROWN:
             self.send_message(game_id, "Сюрикен брошен!", keyboard='in-game')
             self.print_droppile(status, game_id)
             self.dm_player_hands(status, game_id)
