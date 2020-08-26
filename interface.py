@@ -221,9 +221,11 @@ class GameInterface:
     def shuriken(self, game_id, user_id):
         self.handle_uninitialized_game(game_id)
         status = self.games[game_id].vote_shuriken(user_id)
+        n_voted_players = status['player_status'].values().count(SHURIKEN)
+        n_players = len(status['player_status'])
         self.send_message(game_id,
                           f"{self.player_names[user_id]} голосует за сюрикен "
-                          f"({status['player_status'].values().count(SHURIKEN)}/{len(status['player_status'])})")
+                          f"({n_voted_players}/{n_players})")
         if status['response'] == SHURIKEN_THROWN:
             self.send_message(game_id, "Сюрикен брошен!")
             self.print_droppile(status, game_id)
