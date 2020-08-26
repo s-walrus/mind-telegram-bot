@@ -45,6 +45,11 @@ class GameInterface:
         self.send_message = send_message_function
         self.send_dms = send_dms_function
 
+    def handle_uninitialized_game(self, game_id):
+        """Initializes chat if necessary"""
+        if game_id not in self.games:
+            self.init_dialogue(game_id, silent=True)
+
     def win(self, game_id):
         """Finish game and indicate victory"""
         self.games.pop(game_id)
@@ -129,7 +134,7 @@ class GameInterface:
                           'туда, чтобы поиграть!')
 
     def init_dialogue(self, game_id, silent=False):
-        """Prepare to run games in the dialogue; send a welcome message is not silent"""
+        """Prepare to run games in the dialogue; send a welcome message if not silent"""
         new_game = Game(game_id)
         self.games[game_id] = new_game
         if not silent:
@@ -140,6 +145,7 @@ class GameInterface:
     # Участвую
     def add_player(self, game_id, user_id, user_name):
         """Add player to a not started game"""
+        self.handle_uninitialized_game(game_id)
         status = self.games[game_id].add_player(user_id)
         if status['response'] == WARNING:
             self.send_message(game_id,
@@ -154,6 +160,7 @@ class GameInterface:
     # Начать игру
     def start_game(self, game_id):
         """Start new game if there are enough players"""
+        self.handle_uninitialized_game(game_id)
         chat_id = game_id
         status = self.games[chat_id].start_game()
         if len(status['player_hands']) < 2:
@@ -166,6 +173,7 @@ class GameInterface:
     # Закончить игру
     def end_game(self, game_id):
         """Force finish game"""
+        self.handle_uninitialized_game(game_id)
         self.games.pop(game_id)
         self.send_message(game_id,
                           'Игра завершена. Чтобы начать новую игру, нажмите [какую-то кнопку]',
@@ -174,6 +182,7 @@ class GameInterface:
     # Ход
     def act(self, game_id, user_id):
         """Place a card as a player"""
+        self.handle_uninitialized_game(game_id)
         status = self.games[game_id].act(user_id)
         if status['response'] != WARNING:
             card_played = str(status['top_card'])
@@ -189,6 +198,7 @@ class GameInterface:
 
     # Стоп!
     def stop(self, game_id, user_id):
+        self.handle_uninitialized_game(game_id)
         self.send_message(game_id,
                           'СТОП! Если хотите продолжить - все должны отпустить руки',
                           keyboard='concentration')
@@ -197,6 +207,7 @@ class GameInterface:
 
     # Отпустить руку
     def player_concentration(self, game_id, user_id):
+        self.handle_uninitialized_game(game_id)
         status = self.games[game_id].release_hand(user_id)
         if status['response'] == CONCENTRATION_ENDS:
             self.send_message(game_id, "Можно играть!",
@@ -205,6 +216,7 @@ class GameInterface:
 
     # Сюрикен
     def shuriken(self, game_id, user_id):
+        self.handle_uninitialized_game(game_id)
         status = self.games[game_id].vote_shuriken(user_id)
         self.send_message(game_id,
                           f"{self.player_names[user_id]} голосует за сюрикен "
@@ -217,4 +229,5 @@ class GameInterface:
 
     # Отменить сюрикен
     def cancel(self, game_id, user_id):
+        self.handle_uninitialized_game(game_id)
         self.games[game_id].release_hand(user_id)
