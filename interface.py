@@ -134,8 +134,7 @@ class GameInterface:
         self.send_message(user_id,
                           'Отлично, я могу писать тебе сообщения! '
                           'Сюда ты будешь получать информацию о своих '
-                          'картах.\nСоздай беседу с друзьями и добавь меня '
-                          'туда, чтобы поиграть!')
+                          'картах.\nДобавь меня в беседу, чтобы поиграть')
 
     def init_dialogue(self, game_id, silent=False):
         """Prepare to run games in the dialogue; send a welcome message if not silent"""
@@ -143,7 +142,14 @@ class GameInterface:
         self.games[game_id] = new_game
         if not silent:
             self.send_message(game_id,
-                              "Речь мне не написали, но играть со мной уже можно",
+                              "Привет! Я бот для игры в Open Mind. Правила игры "
+                              "можно почитать в группе бота (они такие же, как и в "
+                              "карточной игре The Mind). Для начала, "
+                              "разрешите личные сообщения от меня, чтобы я мог "
+                              "взакрытую показывать вам карты, после этого нажмите "
+                              "\"Участвую\"\n\nЯ не имею никакого отношения к оригинальной игре "
+                              "The Mind. Если у вас возникнут вопросы, в группе бота есть "
+                              "контакты для связи.",
                               keyboard='no_game')
 
     # Участвую
@@ -168,7 +174,7 @@ class GameInterface:
         chat_id = game_id
         status = self.games[chat_id].start_game()
         if len(status['player_hands']) < 2:
-            self.send_message(game_id, 'Для начала игры нужно хотя бы 2 игрока',
+            self.send_message(game_id, 'Для начала игры нужно хотя бы 2 игрока, но не больше 4',
                               keyboard='no_game')
         else:
             self.send_message(game_id, 'Начинаем!', keyboard='last')
@@ -180,7 +186,7 @@ class GameInterface:
         self.handle_uninitialized_game(game_id)
         self.games.pop(game_id)
         self.send_message(game_id,
-                          'Игра завершена. Чтобы начать новую игру, нажмите [какую-то кнопку]',
+                          'Игра завершена. Чтобы начать новую игру, нажмите "Участвую"',
                           keyboard='no_game')
 
     # Ход
@@ -195,7 +201,7 @@ class GameInterface:
                               keyboard='in-game')
             self.dm_player_hands(status, game_id)
             if sum(map(sum, status['discarded'].values())) != 0:
-                self.send_message(game_id, "Упс, ошибочка вышла :(")
+                self.send_message(game_id, "Упс, у кого-то была меньшая карта :(")
                 self.print_droppile(status, game_id)
 
         self.check_status(status, game_id)
@@ -207,7 +213,7 @@ class GameInterface:
         if status['status'] == CONCENTRATION:
             self.send_game_status(status, game_id)
             self.send_message(game_id,
-                              'СТОП! Если хотите продолжить - все должны отпустить руки',
+                              'СТОП! Чтобы продолжить, все должны отпустить руки',
                               keyboard='concentration')
         else:
             self.send_message(game_id,
