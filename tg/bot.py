@@ -1,6 +1,6 @@
 import telebot
 
-import game
+from core import game
 import keyboards
 from env_keys import TELEGRAM_TOKEN
 
