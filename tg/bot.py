@@ -5,8 +5,6 @@ import keyboards
 from env_keys import TELEGRAM_TOKEN
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
-# telebot.apihelper.proxy = {'https': 'socks5h://109.236.81.228:54321',
-#                            'http': 'socks5h://109.236.81.228:54321'}
 
 games = {}
 players = {}
