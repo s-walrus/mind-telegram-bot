@@ -85,14 +85,16 @@ class Game:
             else:
                 response = WARNING
                 throw_warning(
-                    "n_levels should be either 2, 3, or 4. " "This call is ignored."
+                    "n_levels should be either 2, 3, or 4. "
+                    "This call is ignored."
                 )
             if response != WARNING:
                 self.status = FREE_CHAT
         else:
             response = WARNING
             throw_warning(
-                "It was tried to start the game when it had already been started. "
+                "It was tried to start the game when "
+                "it had already been started. "
                 "This call is ignored."
             )
         return self.__get_status(response)
@@ -110,7 +112,8 @@ class Game:
         else:
             response = WARNING
             throw_warning(
-                "It was tried to start a level when other level is not finished. "
+                "It was tried to start a level when"
+                "other level is not finished. "
                 "This call is ignored."
             )
         return self.__get_status(response)
@@ -118,7 +121,8 @@ class Game:
     # place a card to the stack
     def act(self, player_id):
         response = CARD_PLAYED
-        discarded = {player_id: list() for player_id in self.player_status.keys()}
+        discarded = {player_id: list()
+                     for player_id in self.player_status.keys()}
         if (
             self.status == ACTION
             and player_id in self.player_hands.keys()
@@ -149,12 +153,14 @@ class Game:
         else:
             response = WARNING
             throw_warning(
-                "Something went wrong when playing a card. " "This call is ignored."
+                "Something went wrong when playing a card. "
+                "This call is ignored."
             )
         return self.__get_status(response, discarded=discarded)
 
     def place_hand(self, player_id):
-        """Places down all players' hands (this behavior may be changed in future)"""
+        "Places down all players' hands "
+        "(this behavior may be changed in future)"
         response = HAND_PLACED
         if (
             self.status in [CONCENTRATION, ACTION]
@@ -169,7 +175,8 @@ class Game:
         else:
             response = WARNING
             throw_warning(
-                "Hand was placed during wrong game phase. " "This call is ignored."
+                "Hand was placed during wrong game phase. "
+                "This call is ignored."
             )
         return self.__get_status(response)
 
@@ -193,13 +200,15 @@ class Game:
         else:
             response = WARNING
             throw_warning(
-                "Player s hand had been already released. " "This call is ignored."
+                "Player s hand had been already released. "
+                "This call is ignored."
             )
         return self.__get_status(response)
 
     def vote_shuriken(self, player_id):
         response = VOTED_FOR_SHURIKEN
-        discarded = {player_id: list() for player_id in self.player_status.keys()}
+        discarded = {player_id: list()
+                     for player_id in self.player_status.keys()}
         if (
             player_id in self.player_hands.keys()
             and self.status == ACTION
@@ -213,7 +222,8 @@ class Game:
                 self.n_shurikens -= 1
                 for player_id in self.player_hands.keys():
                     if self.player_hands[player_id]:
-                        discarded[player_id] = [min(self.player_hands[player_id])]
+                        discarded[player_id] = [
+                            min(self.player_hands[player_id])]
                         self.player_hands[player_id].remove(
                             min(self.player_hands[player_id])
                         )
@@ -269,7 +279,8 @@ class Game:
         deck = list(range(1, 101))
         random.shuffle(deck)
         for i, player_id in enumerate(self.player_hands.keys()):
-            self.player_hands[player_id] = sorted(deck[i * n_cards : (i + 1) * n_cards])
+            self.player_hands[player_id] = sorted(
+                deck[i * n_cards: (i + 1) * n_cards])
             print(self.player_hands[player_id])
             print("as set: ", set(self.player_hands[player_id]))
 
@@ -303,9 +314,3 @@ class Game:
                 for player_id in self.player_status.keys()
             },
         }
-
-
-if __name__ == "__main__":
-    game = Game(3)
-    print(game.start_level())
-    print(game.act(1, 1))

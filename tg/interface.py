@@ -41,7 +41,9 @@ class GameInterface:
     games = {}
     player_names = {}
 
-    def __init__(self, send_message_function: callable, send_dms_function: callable):
+    def __init__(self,
+                 send_message_function: callable,
+                 send_dms_function: callable):
         self.send_message = send_message_function
         self.send_dms = send_dms_function
 
@@ -71,7 +73,7 @@ class GameInterface:
         )
         self.send_message(
             game_id,
-            f'Чтобы перейти к следующему уровню, нажмите "Начать уровень".',
+            'Чтобы перейти к следующему уровню, нажмите "Начать уровень".',
             keyboard="between_levels",
         )
 
@@ -115,7 +117,8 @@ class GameInterface:
             self.send_game_status(status, game_id)
             self.send_message(
                 game_id,
-                "Концентрация. Поднимите руки со стола, когда будете готовы начинать.",
+                "Концентрация. Поднимите руки со стола, "
+                "когда будете готовы начинать.",
                 keyboard="concentration",
             )
             self.dm_player_hands(status, game_id)
@@ -139,7 +142,8 @@ class GameInterface:
         )
 
     def init_dialogue(self, game_id, silent=False):
-        """Prepare to run games in the dialogue; send a welcome message if not silent"""
+        "Prepare to run games in the dialogue; "
+        "send a welcome message if not silent"
         new_game = Game(game_id)
         self.games[game_id] = new_game
         if not silent:
@@ -150,7 +154,8 @@ class GameInterface:
                 "карточной игре The Mind). Для начала, "
                 "разрешите личные сообщения от меня, чтобы я мог "
                 "взакрытую показывать вам карты, после этого нажмите "
-                '"Участвую"\n\nЯ не имею никакого отношения к оригинальной игре '
+                "\"Участвую\"\n\n"
+                "Я не имею никакого отношения к оригинальной игре "
                 "The Mind. Если у вас возникнут вопросы, в группе бота есть "
                 "контакты для связи.",
                 keyboard="no_game",
@@ -164,14 +169,16 @@ class GameInterface:
         if status["response"] == WARNING:
             self.send_message(
                 game_id,
-                "Ты уже участвуешь или максимальное количество игроков достигнуто",
+                "Ты уже участвуешь или максимальное количество игроков"
+                "достигнуто",
                 keyboard="no_game",
             )
         else:
             self.player_names[user_id] = user_name
             self.send_message(
                 game_id,
-                f"Ты в игре! Колическтво игроков: {len(status['player_hands'])}",
+                f"Ты в игре! Колическтво игроков: "
+                f"{len(status['player_hands'])}",
                 keyboard="no_game",
             )
 
@@ -214,7 +221,8 @@ class GameInterface:
             )
             self.dm_player_hands(status, game_id)
             if sum(map(sum, status["discarded"].values())) != 0:
-                self.send_message(game_id, "Упс, у кого-то была меньшая карта :(")
+                self.send_message(
+                    game_id, "Упс, у кого-то была меньшая карта :(")
                 self.print_droppile(status, game_id)
 
         self.check_status(status, game_id)
@@ -231,7 +239,8 @@ class GameInterface:
                 keyboard="concentration",
             )
         else:
-            self.send_message(game_id, "Похоже, игра не началась", keyboard="last")
+            self.send_message(
+                game_id, "Похоже, игра не началась", keyboard="last")
 
     # Отпустить руку
     def player_concentration(self, game_id, user_id):
@@ -245,7 +254,8 @@ class GameInterface:
     def shuriken(self, game_id, user_id):
         self.handle_uninitialized_game(game_id)
         status = self.games[game_id].vote_shuriken(user_id)
-        n_voted_players = list(status["player_status"].values()).count(SHURIKEN)
+        n_voted_players = list(
+            status["player_status"].values()).count(SHURIKEN)
         n_players = len(status["player_status"])
         if status["response"] == VOTED_FOR_SHURIKEN:
             self.send_message(

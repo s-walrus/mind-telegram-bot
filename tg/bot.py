@@ -68,7 +68,9 @@ def next_level(status, message):
         status["level"], prizes[rewards[status["level"] - 1]]
     )
     bot.send_message(
-        message.chat.id, message_text, reply_markup=keyboards.start_level_keyboard()
+        message.chat.id,
+        message_text,
+        reply_markup=keyboards.start_level_keyboard()
     )
 
 
@@ -98,7 +100,8 @@ def drop_cards(status, message):
     ll = status["discarded"].values()
     cards = list(map(str, sorted([el for lst in ll for el in lst])))
     cards = "Сброшенные карты: " + ", ".join(cards)
-    bot.send_message(message.chat.id, cards, reply_markup=keyboards.game_keyboard())
+    bot.send_message(message.chat.id, cards,
+                     reply_markup=keyboards.game_keyboard())
 
 
 def player_status(status, message):
@@ -106,7 +109,7 @@ def player_status(status, message):
         text = "Твоя рука:\n" + " ".join([str(item) for item in hand])
         try:
             bot.send_message(player_id, text)
-        except:
+        except Exception:
             bot.send_message(
                 message.chat.id,
                 "Игрок с id {} не начал диалог с ботом".format(player_id),
@@ -120,7 +123,8 @@ def start_level(message):
     if status["response"] == LEVEL_STARTED:
         bot.send_message(
             message.chat.id,
-            "Концентрация. Поднимите руки со стола, когда будете " "готовы начинать.",
+            "Концентрация. Поднимите руки со стола, когда будете "
+            "готовы начинать.",
             reply_markup=keyboards.concentration_keyboard(),
         )
         player_status(status, message)
@@ -160,13 +164,14 @@ def start(message):
 def add_player(message):
     try:
         games[message.chat.id]
-    except:
+    except Exception:
         return
     status = games[message.chat.id].add_player(message.from_user.id)
     if status["response"] == WARNING:
         bot.send_message(
             message.chat.id,
-            "Ты уже участвуешь или максимальное количество " "игроков достигнуто",
+            "Ты уже участвуешь или максимальное количество "
+            "игроков достигнуто",
             reply_markup=keyboards.begin_keyboard(),
             reply_to_message_id=message.message_id,
         )
@@ -189,7 +194,8 @@ def add_player(message):
 @bot.message_handler(regexp=r"^Начать игру$")
 def start_game(message):
     chat_id = message.chat.id
-    status = games[chat_id].start_game()  # removed user id from start_game([user_id])
+    # removed user id from start_game([user_id])
+    status = games[chat_id].start_game()
     if len(status["player_hands"]) < 2:
         bot.send_message(
             chat_id,
@@ -251,7 +257,9 @@ def player_concentration(message):
     status = games[message.chat.id].release_hand(message.from_user.id)
     if status["response"] == CONCENTRATION_ENDS:
         bot.send_message(
-            message.chat.id, "Можно играть!", reply_markup=keyboards.game_keyboard()
+            message.chat.id,
+            "Можно играть!",
+            reply_markup=keyboards.game_keyboard()
         )
         player_status(status, message)
 
