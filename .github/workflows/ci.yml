@@ -28,6 +28,8 @@ jobs:
         with:
           black: true
           flake8: true
+          continue_on_error: false
+          auto_fix: true
           
   docker:
     needs: run-linters
