@@ -1,7 +1,5 @@
 import telebot
 
-# a comment
-
 from core import game
 import keyboards
 from env_keys import TELEGRAM_TOKEN
