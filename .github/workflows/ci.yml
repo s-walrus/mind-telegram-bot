@@ -5,6 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  release:
 
 jobs:
   run-linters:
@@ -31,7 +32,7 @@ jobs:
           auto_fix: true
           
   docker:
-    if: ${{ startsWith(github.ref, 'refs/tags/v') && success() }}
+    if: ${{ github.event_name == 'release' && success() }}
     needs: run-linters
     runs-on: ubuntu-latest
     steps:
