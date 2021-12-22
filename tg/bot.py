@@ -2,7 +2,9 @@ import telebot
 
 from core import game
 import keyboards
-from env_keys import TELEGRAM_TOKEN
+import os
+
+TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 

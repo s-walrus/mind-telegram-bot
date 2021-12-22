@@ -219,5 +219,6 @@ dmypy.json
 env_keys.py
 1.sh
 2.sh
+tgtoken
 
 # End of https://www.gitignore.io/api/python,pycharm+all
